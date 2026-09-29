@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Nova AI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #111827, #1e3a8a);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+
+    .app {
+      width: 95%;
+      max-width: 700px;
+      height: 90vh;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(15px);
+      border-radius: 25px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    header {
+      padding: 20px;
+      text-align: center;
+      background: rgba(0,0,0,0.2);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      color: #cbd5e1;
+    }
+
+    #chat {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .message {
+      padding: 13px 16px;
+      margin-bottom: 12px;
+      border-radius: 16px;
+      max-width: 85%;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .user {
+      background: #2563eb;
+      margin-right: auto;
+    }
+
+    .bot {
+      background: rgba(255,255,255,0.12);
+      margin-left: auto;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+      padding: 15px;
+      background: rgba(0,0,0,0.2);
+    }
+
+    input {
+      flex: 1;
+      border: none;
+      outline: none;
+      border-radius: 14px;
+      padding: 15px;
+      font-size: 16px;
+      background: white;
+      color: black;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 0 20px;
+      background: #3b82f6;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <header>
+      <h1>🤖 Nova AI</h1>
+      <p>مساعدك الذكي</p>
+    </header>
+
+    <div id="chat">
+      <div class="message bot">
+        مرحبًا! 👋 أنا Nova AI.
+        كيف يمكنني مساعدتك؟
+      </div>
+    </div>
+
+    <div class="input-area">
+      <input
+        id="messageInput"
+        type="text"
+        placeholder="اكتب رسالتك..."
+        autocomplete="off"
+      >
+
+      <button onclick="sendMessage()">إرسال</button>
+    </div>
+
+  </div>
+
+  <script>
+    const chat = document.getElementById("chat");
+    const input = document.getElementById("messageInput");
+
+    function addMessage(text, type) {
+      const div = document.createElement("div");
+      div.className = "message " + type;
+      div.textContent = text;
+
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const message = input.value.trim();
+
+      if (!message) return;
+
+      addMessage(message, "user");
+      input.value = "";
+
+      addMessage("⏳ أفكر...", "bot");
+
+      try {
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: message
+          })
+        });
+
+        const data = await response.json();
+
+        chat.lastElementChild.remove();
+
+        if (data.reply) {
+          addMessage(data.reply, "bot");
+        } else {
+          addMessage("حدث خطأ ❌", "bot");
+        }
+
+      } catch (error) {
+        chat.lastElementChild.remove();
+        addMessage(
+          "لا يمكن الاتصال بالخادم حاليًا.",
+          "bot"
+        );
+      }
+    }
+
+    input.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        sendMessage();
+      }
+    });
+  </script>
+
+</body>
+</html>
