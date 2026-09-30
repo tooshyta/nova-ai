@@ -1,5 +1,11 @@
 import express from "express";
 import OpenAI from "openai";
+import path from "path";
+import { fileURLToPath } from "url";
+
+// ضبط المسار المطلق لنظام ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,7 +16,19 @@ const client = new OpenAI({
 });
 
 app.use(express.json({ limit: "15mb" }));
-app.use(express.static("public"));
+
+// خدمة الملفات الثابتة بالمسار المطلق
+app.use(express.static(path.join(__dirname, "public")));
+
+// مسار مباشر لملف robots.txt لمنع أي خطأ 404
+app.get("/robots.txt", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "robots.txt"));
+});
+
+// مسار مباشر لملف sitemap.xml
+app.get("/sitemap.xml", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "sitemap.xml"));
+});
 
 app.post("/api/chat", async (req, res) => {
   try {
