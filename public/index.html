@@ -44,39 +44,28 @@
       position: fixed;
       top: 10px;
       left: 15px;
-
       display: flex;
       align-items: center;
-
       gap: 9px;
-
       text-decoration: none;
       color: white;
-
       z-index: 300;
-
       direction: ltr;
-
       cursor: pointer;
     }
 
     .top-logo img {
       width: 40px;
       height: 40px;
-
       object-fit: cover;
-
       border-radius: 12px;
-
       border: 1px solid #303541;
-
       display: block;
     }
 
     .top-logo span {
       font-size: 17px;
       font-weight: bold;
-
       white-space: nowrap;
     }
 
@@ -87,46 +76,31 @@
     .sidebar {
       width: 270px;
       height: 100vh;
-
       background: #10131a;
-
       border-left: 1px solid #252a33;
-
       display: flex;
       flex-direction: column;
-
       padding: 15px;
-
       flex-shrink: 0;
-
       z-index: 100;
     }
 
     .sidebar-title {
       font-size: 21px;
       font-weight: bold;
-
       margin-bottom: 18px;
-
       text-align: right;
     }
 
     .new-chat {
       width: 100%;
-
       border: none;
       border-radius: 10px;
-
       background: #202631;
-
       color: white;
-
       padding: 12px;
-
       font-size: 15px;
-
       cursor: pointer;
-
       transition: 0.2s;
     }
 
@@ -137,34 +111,24 @@
     .history-title {
       margin-top: 22px;
       margin-bottom: 10px;
-
       color: #9ca3af;
-
       font-size: 13px;
     }
 
     .history {
       flex: 1;
-
       overflow-y: auto;
     }
 
     .history-item {
       display: flex;
       align-items: center;
-
       justify-content: space-between;
-
       gap: 8px;
-
       padding: 10px;
-
       border-radius: 8px;
-
       cursor: pointer;
-
       margin-bottom: 4px;
-
       transition: 0.2s;
     }
 
@@ -178,27 +142,18 @@
 
     .history-name {
       flex: 1;
-
       overflow: hidden;
-
       white-space: nowrap;
-
       text-overflow: ellipsis;
-
       font-size: 14px;
     }
 
     .delete-history {
       background: transparent;
-
       border: none;
-
       color: #777;
-
       cursor: pointer;
-
       font-size: 16px;
-
       padding: 2px 5px;
     }
 
@@ -212,13 +167,9 @@
 
     .main {
       flex: 1;
-
       height: 100vh;
-
       display: flex;
-
       flex-direction: column;
-
       min-width: 0;
     }
 
@@ -228,47 +179,30 @@
 
     .header {
       height: 60px;
-
       border-bottom: 1px solid #252a33;
-
       display: flex;
-
       align-items: center;
-
       justify-content: center;
-
       position: relative;
-
       flex-shrink: 0;
     }
 
     .header-title {
       font-size: 18px;
-
       font-weight: bold;
     }
 
     .menu-button {
       display: none;
-
       position: absolute;
-
       right: 15px;
-
       background: #202631;
-
       border: none;
-
       color: white;
-
       width: 40px;
-
       height: 40px;
-
       border-radius: 10px;
-
       cursor: pointer;
-
       font-size: 20px;
     }
 
@@ -278,54 +212,38 @@
 
     .chat {
       flex: 1;
-
       overflow-y: auto;
-
       padding: 25px;
-
       scroll-behavior: smooth;
     }
 
     .welcome {
       height: 100%;
-
       display: flex;
-
       align-items: center;
-
       justify-content: center;
-
       flex-direction: column;
-
       text-align: center;
-
       gap: 12px;
     }
 
     .welcome-logo {
       width: 70px;
       height: 70px;
-
       object-fit: cover;
-
       border-radius: 18px;
-
       border: 1px solid #303541;
-
       margin-bottom: 5px;
     }
 
     .welcome h1 {
       margin: 0;
-
       font-size: 28px;
     }
 
     .welcome p {
       margin: 0;
-
       color: #9ca3af;
-
       font-size: 15px;
     }
 
@@ -335,9 +253,7 @@
 
     .message {
       display: flex;
-
       margin-bottom: 18px;
-
       width: 100%;
     }
 
@@ -351,70 +267,93 @@
 
     .message-content {
       max-width: 80%;
-
       padding: 12px 15px;
-
       border-radius: 14px;
-
       line-height: 1.7;
-
       font-size: 15px;
-
       word-wrap: break-word;
     }
 
     .message.user .message-content {
       background: #202631;
-
       border-bottom-left-radius: 5px;
     }
 
     .message.ai .message-content {
       background: #151a22;
-
       border: 1px solid #252b35;
-
       border-bottom-right-radius: 5px;
     }
 
     .message-image {
       max-width: 300px;
-
       max-height: 300px;
-
       object-fit: contain;
-
       border-radius: 12px;
-
       display: block;
-
       margin-bottom: 8px;
     }
 
     .copy-button {
       display: block;
-
       margin-top: 8px;
-
       background: transparent;
-
       border: 1px solid #303641;
-
       color: #9ca3af;
-
       padding: 5px 9px;
-
       border-radius: 7px;
-
       cursor: pointer;
-
       font-size: 12px;
     }
 
     .copy-button:hover {
       background: #202631;
-
       color: white;
+    }
+
+    /* =========================
+       THREE THINKING DOTS
+    ========================= */
+
+    .thinking-dots {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      height: 24px;
+      direction: ltr;
+    }
+
+    .thinking-dots span {
+      width: 7px;
+      height: 7px;
+      background: #9ca3af;
+      border-radius: 50%;
+      display: block;
+      animation: thinkingBounce 1.2s infinite ease-in-out;
+    }
+
+    .thinking-dots span:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    .thinking-dots span:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes thinkingBounce {
+
+      0%,
+      60%,
+      100% {
+        transform: translateY(0);
+        opacity: 0.5;
+      }
+
+      30% {
+        transform: translateY(-6px);
+        opacity: 1;
+      }
+
     }
 
     /* =========================
@@ -423,53 +362,33 @@
 
     .input-area {
       padding: 15px 20px 20px;
-
       flex-shrink: 0;
     }
 
     .input-box {
       max-width: 900px;
-
       margin: auto;
-
       background: #151a22;
-
       border: 1px solid #303641;
-
       border-radius: 16px;
-
       padding: 10px;
-
       display: flex;
-
       align-items: flex-end;
-
       gap: 8px;
     }
 
     textarea {
       flex: 1;
-
       resize: none;
-
       max-height: 160px;
-
       min-height: 42px;
-
       background: transparent;
-
       border: none;
-
       outline: none;
-
       color: white;
-
       font-family: inherit;
-
       font-size: 15px;
-
       line-height: 1.5;
-
       padding: 9px;
     }
 
@@ -479,21 +398,13 @@
 
     .input-button {
       width: 40px;
-
       height: 40px;
-
       border: none;
-
       border-radius: 10px;
-
       background: #202631;
-
       color: white;
-
       cursor: pointer;
-
       font-size: 18px;
-
       flex-shrink: 0;
     }
 
@@ -503,11 +414,8 @@
 
     .send-button {
       background: #ffffff;
-
       color: #000000;
-
       font-size: 17px;
-
       font-weight: bold;
     }
 
@@ -517,15 +425,10 @@
 
     .image-preview {
       max-width: 80px;
-
       max-height: 80px;
-
       border-radius: 10px;
-
       object-fit: cover;
-
       display: none;
-
       margin: 0 4px;
     }
 
@@ -537,13 +440,9 @@
 
       .sidebar {
         position: fixed;
-
         right: -280px;
-
         top: 0;
-
         transition: right 0.25s ease;
-
         z-index: 200;
       }
 
@@ -567,7 +466,6 @@
       .top-logo img {
         width: 38px;
         height: 38px;
-
         border-radius: 11px;
       }
 
@@ -599,10 +497,7 @@
 
 <body>
 
-  <!-- =========================
-       الشعار أعلى اليسار
-       الضغط عليه يعيد الصفحة
-  ========================= -->
+  <!-- الشعار أعلى اليسار -->
 
   <a
     href="/"
@@ -620,9 +515,7 @@
   </a>
 
 
-  <!-- =========================
-       SIDEBAR
-  ========================= -->
+  <!-- SIDEBAR -->
 
   <aside
     class="sidebar"
@@ -652,9 +545,7 @@
   </aside>
 
 
-  <!-- =========================
-       MAIN
-  ========================= -->
+  <!-- MAIN -->
 
   <main class="main">
 
@@ -705,9 +596,7 @@
     </section>
 
 
-    <!-- =========================
-         INPUT
-    ========================= -->
+    <!-- INPUT -->
 
     <div class="input-area">
 
@@ -896,7 +785,6 @@
 
     /* =========================
        DELETE CONVERSATION
-       تم التصحيح هنا
     ========================= */
 
     function deleteConversation(id, event) {
@@ -919,7 +807,6 @@
 
       }
 
-      /* حفظ المحادثات بعد الحذف */
       saveConversations();
 
       if (!currentConversationId) {
@@ -1244,7 +1131,10 @@
 
       }
 
-      if (role === "assistant") {
+      if (
+        role === "assistant" &&
+        content !== "جاري التفكير..."
+      ) {
 
         const copyButton =
           document.createElement(
@@ -1292,6 +1182,59 @@
         );
 
       }
+
+      message.appendChild(
+        messageContent
+      );
+
+      chat.appendChild(
+        message
+      );
+
+    }
+
+
+    /* =========================
+       THINKING DOTS
+    ========================= */
+
+    function addThinkingMessage() {
+
+      const chat =
+        document.getElementById(
+          "chat"
+        );
+
+      const message =
+        document.createElement(
+          "div"
+        );
+
+      message.className =
+        "message ai";
+
+      message.id =
+        "thinkingMessage";
+
+      const messageContent =
+        document.createElement(
+          "div"
+        );
+
+      messageContent.className =
+        "message-content";
+
+      messageContent.innerHTML = `
+
+        <div class="thinking-dots">
+
+          <span></span>
+          <span></span>
+          <span></span>
+
+        </div>
+
+      `;
 
       message.appendChild(
         messageContent
@@ -1409,13 +1352,9 @@
       clearSelectedImage();
 
 
-      /* رسالة انتظار */
+      /* الثلاث كرات */
 
-      addMessageToScreen(
-        "assistant",
-        "جاري التفكير...",
-        null
-      );
+      addThinkingMessage();
 
       scrollToBottom();
 
@@ -1426,9 +1365,7 @@
           conversation.messages;
 
 
-        /* =========================
-           الاتصال بالـBackend
-        ========================= */
+        /* الاتصال بالـBackend */
 
         const response =
           await fetch(
@@ -1471,17 +1408,16 @@
           await response.json();
 
 
-        /* إزالة رسالة الانتظار */
+        /* إزالة الثلاث كرات */
 
-        conversation.messages =
-          conversation.messages.filter(
-            msg =>
-              !(
-                msg.role === "assistant" &&
-                msg.content ===
-                "جاري التفكير..."
-              )
+        const thinkingMessage =
+          document.getElementById(
+            "thinkingMessage"
           );
+
+        if (thinkingMessage) {
+          thinkingMessage.remove();
+        }
 
 
         const answer =
@@ -1516,15 +1452,16 @@
         console.error(error);
 
 
-        conversation.messages =
-          conversation.messages.filter(
-            msg =>
-              !(
-                msg.role === "assistant" &&
-                msg.content ===
-                "جاري التفكير..."
-              )
+        /* إزالة الثلاث كرات */
+
+        const thinkingMessage =
+          document.getElementById(
+            "thinkingMessage"
           );
+
+        if (thinkingMessage) {
+          thinkingMessage.remove();
+        }
 
 
         conversation.messages.push({
@@ -1677,6 +1614,7 @@
         document.getElementById(
           "chat"
         );
+
 
       setTimeout(
         () => {
