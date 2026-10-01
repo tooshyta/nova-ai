@@ -21,7 +21,7 @@ app.use(express.json({ limit: "15mb" }));
 app.use((req, res, next) => {
   res.setHeader(
     "Access-Control-Allow-Origin",
-    "https://nova-ai-web.onrender.com"
+    "https://nova-ai-frontend-yhuy.onrender.com"
   );
 
   res.setHeader(
