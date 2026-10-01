@@ -466,7 +466,7 @@
       .top-logo img {
         width: 38px;
         height: 38px;
-        border-radius: 11px;
+        border-radius: 12px;
       }
 
       .top-logo span {
@@ -497,8 +497,6 @@
 
 <body>
 
-  <!-- الشعار أعلى اليسار -->
-
   <a
     href="/"
     class="top-logo"
@@ -514,8 +512,6 @@
 
   </a>
 
-
-  <!-- SIDEBAR -->
 
   <aside
     class="sidebar"
@@ -545,8 +541,6 @@
   </aside>
 
 
-  <!-- MAIN -->
-
   <main class="main">
 
     <header class="header">
@@ -564,8 +558,6 @@
 
     </header>
 
-
-    <!-- CHAT -->
 
     <section
       class="chat"
@@ -595,8 +587,6 @@
 
     </section>
 
-
-    <!-- INPUT -->
 
     <div class="input-area">
 
@@ -649,10 +639,6 @@
 
   <script>
 
-    /* =========================
-       STORAGE
-    ========================= */
-
     let conversations =
       JSON.parse(
         localStorage.getItem("nova_conversations") || "[]"
@@ -664,10 +650,6 @@
     let selectedImage = null;
 
 
-    /* =========================
-       SAVE
-    ========================= */
-
     function saveConversations() {
 
       localStorage.setItem(
@@ -678,10 +660,6 @@
     }
 
 
-    /* =========================
-       ID
-    ========================= */
-
     function createId() {
 
       return Date.now().toString()
@@ -689,10 +667,6 @@
 
     }
 
-
-    /* =========================
-       CURRENT CONVERSATION
-    ========================= */
 
     function getCurrentConversation() {
 
@@ -702,10 +676,6 @@
 
     }
 
-
-    /* =========================
-       TITLE
-    ========================= */
 
     function createTitle(text) {
 
@@ -721,10 +691,6 @@
 
     }
 
-
-    /* =========================
-       NEW CHAT
-    ========================= */
 
     function createNewConversation() {
 
@@ -761,10 +727,6 @@
     }
 
 
-    /* =========================
-       OPEN CONVERSATION
-    ========================= */
-
     function openConversation(id) {
 
       currentConversationId = id;
@@ -782,10 +744,6 @@
 
     }
 
-
-    /* =========================
-       DELETE CONVERSATION
-    ========================= */
 
     function deleteConversation(id, event) {
 
@@ -834,10 +792,6 @@
 
     }
 
-
-    /* =========================
-       HISTORY
-    ========================= */
 
     function renderHistory() {
 
@@ -913,10 +867,6 @@
     }
 
 
-    /* =========================
-       RENDER CONVERSATION
-    ========================= */
-
     function renderConversation() {
 
       const chat =
@@ -959,10 +909,6 @@
     }
 
 
-    /* =========================
-       WELCOME
-    ========================= */
-
     function createWelcome() {
 
       const welcome =
@@ -996,10 +942,6 @@
     }
 
 
-    /* =========================
-       RESET
-    ========================= */
-
     function resetChat() {
 
       const chat =
@@ -1016,10 +958,6 @@
     }
 
 
-    /* =========================
-       ESCAPE HTML
-    ========================= */
-
     function escapeHtml(text) {
 
       const div =
@@ -1033,10 +971,6 @@
 
     }
 
-
-    /* =========================
-       FORMAT TEXT
-    ========================= */
 
     function formatText(text) {
 
@@ -1059,10 +993,6 @@
 
     }
 
-
-    /* =========================
-       ADD MESSAGE
-    ========================= */
 
     function addMessageToScreen(
       role,
@@ -1194,10 +1124,6 @@
     }
 
 
-    /* =========================
-       THINKING DOTS
-    ========================= */
-
     function addThinkingMessage() {
 
       const chat =
@@ -1247,10 +1173,6 @@
     }
 
 
-    /* =========================
-       SEND MESSAGE
-    ========================= */
-
     async function sendMessage() {
 
       const input =
@@ -1268,8 +1190,6 @@
         return;
       }
 
-
-      /* إذا لم توجد محادثة */
 
       if (!currentConversationId) {
 
@@ -1304,8 +1224,6 @@
         getCurrentConversation();
 
 
-      /* أول رسالة = العنوان */
-
       if (
         conversation.messages.length === 0 &&
         message
@@ -1316,8 +1234,6 @@
 
       }
 
-
-      /* حفظ رسالة المستخدم */
 
       conversation.messages.push({
 
@@ -1334,9 +1250,6 @@
 
       renderHistory();
 
-
-      /* عرض الرسالة */
-
       renderConversation();
 
 
@@ -1352,8 +1265,6 @@
       clearSelectedImage();
 
 
-      /* الثلاث كرات */
-
       addThinkingMessage();
 
       scrollToBottom();
@@ -1364,8 +1275,6 @@
         const history =
           conversation.messages;
 
-
-        /* الاتصال بالـBackend */
 
         const response =
           await fetch(
@@ -1407,8 +1316,6 @@
         const data =
           await response.json();
 
-
-        /* إزالة الثلاث كرات */
 
         const thinkingMessage =
           document.getElementById(
@@ -1452,8 +1359,6 @@
         console.error(error);
 
 
-        /* إزالة الثلاث كرات */
-
         const thinkingMessage =
           document.getElementById(
             "thinkingMessage"
@@ -1486,10 +1391,6 @@
 
     }
 
-
-    /* =========================
-       IMAGE UPLOAD
-    ========================= */
 
     function handleImageUpload(event) {
 
@@ -1533,10 +1434,6 @@
     }
 
 
-    /* =========================
-       CLEAR IMAGE
-    ========================= */
-
     function clearSelectedImage() {
 
       selectedImage =
@@ -1566,10 +1463,6 @@
     }
 
 
-    /* =========================
-       TEXTAREA RESIZE
-    ========================= */
-
     function autoResize(textarea) {
 
       textarea.style.height =
@@ -1583,10 +1476,6 @@
 
     }
 
-
-    /* =========================
-       ENTER
-    ========================= */
 
     function handleEnter(event) {
 
@@ -1603,10 +1492,6 @@
 
     }
 
-
-    /* =========================
-       SCROLL
-    ========================= */
 
     function scrollToBottom() {
 
@@ -1629,10 +1514,6 @@
     }
 
 
-    /* =========================
-       MOBILE MENU
-    ========================= */
-
     function openMobileMenu() {
 
       document
@@ -1652,10 +1533,6 @@
 
     }
 
-
-    /* =========================
-       START
-    ========================= */
 
     function init() {
 
