@@ -22,6 +22,10 @@
     content="Nova AI"
   >
 
+  <!-- =========================
+       FAVICON / STICKER
+  ========================= -->
+
   <link
     rel="icon"
     type="image/png"
@@ -30,9 +34,28 @@
   >
 
   <link
-    rel="apple-touch-icon"
+    rel="icon"
+    type="image/png"
+    sizes="192x192"
     href="/logo.png"
   >
+
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="48x48"
+    href="/logo.png"
+  >
+
+  <link
+    rel="apple-touch-icon"
+    sizes="180x180"
+    href="/logo.png"
+  >
+
+  <!-- =========================
+       SOCIAL PREVIEW
+  ========================= -->
 
   <meta
     property="og:site_name"
@@ -52,6 +75,21 @@
   <meta
     property="og:image"
     content="https://nova-ai-frontend-yhuy.onrender.com/logo.png"
+  >
+
+  <meta
+    property="og:image:type"
+    content="image/png"
+  >
+
+  <meta
+    property="og:image:width"
+    content="512"
+  >
+
+  <meta
+    property="og:image:height"
+    content="512"
   >
 
   <meta
@@ -107,9 +145,16 @@
     .top-logo img {
       width: 40px;
       height: 40px;
-      object-fit: cover;
+
+      /* مهم للـSticker */
+      object-fit: contain;
+
       border-radius: 12px;
       border: 1px solid #303541;
+
+      /* يحافظ على شكل الصورة */
+      background: transparent;
+
       display: block;
     }
 
@@ -280,10 +325,18 @@
     .welcome-logo {
       width: 70px;
       height: 70px;
-      object-fit: cover;
+
+      /* مهم للـSticker */
+      object-fit: contain;
+
       border-radius: 18px;
       border: 1px solid #303541;
+
+      /* لا يضيف خلفية للصورة */
+      background: transparent;
+
       margin-bottom: 5px;
+      display: block;
     }
 
     .welcome h1 {
@@ -477,7 +530,7 @@
       max-width: 80px;
       max-height: 80px;
       border-radius: 10px;
-      object-fit: cover;
+      object-fit: contain;
       display: none;
       margin: 0 4px;
     }
@@ -516,7 +569,12 @@
       .top-logo img {
         width: 38px;
         height: 38px;
+
+        /* Sticker كامل */
+        object-fit: contain;
+
         border-radius: 12px;
+        background: transparent;
       }
 
       .top-logo span {
@@ -547,6 +605,10 @@
 
 <body>
 
+  <!-- =========================
+       LOGO
+  ========================= -->
+
   <a
     href="/"
     class="top-logo"
@@ -562,6 +624,10 @@
 
   </a>
 
+
+  <!-- =========================
+       SIDEBAR
+  ========================= -->
 
   <aside
     class="sidebar"
@@ -591,6 +657,10 @@
   </aside>
 
 
+  <!-- =========================
+       MAIN
+  ========================= -->
+
   <main class="main">
 
     <header class="header">
@@ -608,6 +678,10 @@
 
     </header>
 
+
+    <!-- =========================
+         CHAT
+    ========================= -->
 
     <section
       class="chat"
@@ -637,6 +711,10 @@
 
     </section>
 
+
+    <!-- =========================
+         INPUT
+    ========================= -->
 
     <div class="input-area">
 
@@ -686,6 +764,11 @@
 
   </main>
 
+
+  <!-- =========================
+       JAVASCRIPT
+       بدون تغيير وظائف Nova AI
+  ========================= -->
 
   <script>
 
