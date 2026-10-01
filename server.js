@@ -17,35 +17,85 @@ const client = new OpenAI({
 
 app.use(express.json({ limit: "15mb" }));
 
-// خدمة الملفات الثابتة بالمسار المطلق
-app.use(express.static(path.join(__dirname, "public")));
+// السماح للواجهة الجديدة بالاتصال بالـ Backend
+app.use((req, res, next) => {
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "https://nova-ai-frontend-yhuy.onrender.com"
+  );
 
-// مسار مباشر لملف robots.txt لمنع أي خطأ 404
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,POST,OPTIONS"
+  );
+
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type"
+  );
+
+  // معالجة طلب CORS المسبق
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
+// خدمة الملفات الثابتة
+app.use(
+  express.static(
+    path.join(__dirname, "public")
+  )
+);
+
+// مسار مباشر لملف robots.txt
 app.get("/robots.txt", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "robots.txt"));
+  res.sendFile(
+    path.join(
+      __dirname,
+      "public",
+      "robots.txt"
+    )
+  );
 });
 
 // مسار مباشر لملف sitemap.xml
 app.get("/sitemap.xml", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "sitemap.xml"));
+  res.sendFile(
+    path.join(
+      __dirname,
+      "public",
+      "sitemap.xml"
+    )
+  );
 });
 
+// API الخاص بالمحادثة
 app.post("/api/chat", async (req, res) => {
   try {
-    const message = req.body.message;
-    const image = req.body.image;
-    const history = Array.isArray(req.body.history)
-      ? req.body.history
-      : [];
+
+    const message =
+      req.body.message;
+
+    const image =
+      req.body.image;
+
+    const history =
+      Array.isArray(req.body.history)
+        ? req.body.history
+        : [];
 
     if (!message && !image) {
       return res.status(400).json({
-        error: "اكتب رسالة أو أرسل صورة أولاً"
+        error:
+          "اكتب رسالة أو أرسل صورة أولاً"
       });
     }
 
     const systemMessage = {
       role: "system",
+
       content: `
 أنت Nova AI، مساعد ذكي ومفيد.
 
@@ -85,40 +135,61 @@ app.post("/api/chat", async (req, res) => {
 `
     };
 
-    const messages = [systemMessage];
+    const messages = [
+      systemMessage
+    ];
 
+    // إضافة سجل المحادثة السابقة
     for (const item of history) {
+
       if (
         item &&
-        (item.role === "user" || item.role === "assistant") &&
+        (
+          item.role === "user" ||
+          item.role === "assistant"
+        ) &&
         typeof item.content === "string"
       ) {
+
         messages.push({
           role: item.role,
           content: item.content
         });
+
       }
+
     }
 
     let currentContent;
 
+    // إذا كانت هناك صورة
     if (image) {
+
       currentContent = [
+
         {
           type: "text",
+
           text:
             message ||
             "حلل هذه الصورة واشرح لي ما فيها."
         },
+
         {
           type: "image_url",
+
           image_url: {
             url: image
           }
         }
+
       ];
+
     } else {
-      currentContent = message;
+
+      currentContent =
+        message;
+
     }
 
     messages.push({
@@ -126,14 +197,21 @@ app.post("/api/chat", async (req, res) => {
       content: currentContent
     });
 
+    // إرسال الطلب إلى Hugging Face
     const completion =
       await client.chat.completions.create({
-        model: "Qwen/Qwen2.5-VL-72B-Instruct:fastest",
+
+        model:
+          "Qwen/Qwen2.5-VL-72B-Instruct:fastest",
+
         messages
+
       });
 
     const reply =
-      completion.choices?.[0]?.message?.content ||
+      completion
+        .choices?.[0]
+        ?.message?.content ||
       "لم أتمكن من إنشاء إجابة.";
 
     res.json({
@@ -142,18 +220,30 @@ app.post("/api/chat", async (req, res) => {
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "Nova AI Error:",
+      error
+    );
 
     res.status(500).json({
+
       error:
         error?.message ||
         "حدث خطأ أثناء الاتصال بالذكاء الاصطناعي"
+
     });
+
   }
 });
 
-app.listen(PORT, () => {
-  console.log(
-    `Nova AI يعمل على المنفذ ${PORT}`
-  );
-});
+// تشغيل الخادم
+app.listen(
+  PORT,
+  () => {
+
+    console.log(
+      `Nova AI يعمل على المنفذ ${PORT}`
+    );
+
+  }
+);
