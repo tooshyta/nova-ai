@@ -21,7 +21,7 @@ app.use(express.json({ limit: "15mb" }));
 app.use((req, res, next) => {
   res.setHeader(
     "Access-Control-Allow-Origin",
-    "https://nova-ai-frontend-yhuy.onrender.com"
+    "https://nova-ai-web.onrender.com"
   );
 
   res.setHeader(
@@ -34,7 +34,6 @@ app.use((req, res, next) => {
     "Content-Type"
   );
 
-  // معالجة طلب CORS المسبق
   if (req.method === "OPTIONS") {
     return res.sendStatus(204);
   }
@@ -49,7 +48,7 @@ app.use(
   )
 );
 
-// مسار مباشر لملف robots.txt
+// robots.txt
 app.get("/robots.txt", (req, res) => {
   res.sendFile(
     path.join(
@@ -60,7 +59,7 @@ app.get("/robots.txt", (req, res) => {
   );
 });
 
-// مسار مباشر لملف sitemap.xml
+// sitemap.xml
 app.get("/sitemap.xml", (req, res) => {
   res.sendFile(
     path.join(
@@ -169,7 +168,6 @@ app.post("/api/chat", async (req, res) => {
 
         {
           type: "text",
-
           text:
             message ||
             "حلل هذه الصورة واشرح لي ما فيها."
@@ -177,7 +175,6 @@ app.post("/api/chat", async (req, res) => {
 
         {
           type: "image_url",
-
           image_url: {
             url: image
           }
