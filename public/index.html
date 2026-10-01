@@ -471,7 +471,6 @@
       line-height: 1.5;
 
       padding: 9px;
-
     }
 
     textarea::placeholder {
@@ -610,12 +609,14 @@
     class="top-logo"
     title="Nova AI"
   >
+
     <img
       src="/logo.png"
       alt="Nova AI"
     >
 
     <span>Nova AI</span>
+
   </a>
 
 
@@ -623,7 +624,10 @@
        SIDEBAR
   ========================= -->
 
-  <aside class="sidebar" id="sidebar">
+  <aside
+    class="sidebar"
+    id="sidebar"
+  >
 
     <div class="sidebar-title">
       Nova AI
@@ -845,9 +849,12 @@
 
       };
 
-      conversations.unshift(conversation);
+      conversations.unshift(
+        conversation
+      );
 
-      currentConversationId = conversation.id;
+      currentConversationId =
+        conversation.id;
 
       localStorage.setItem(
         "nova_current_conversation",
@@ -889,6 +896,7 @@
 
     /* =========================
        DELETE CONVERSATION
+       تم التصحيح هنا
     ========================= */
 
     function deleteConversation(id, event) {
@@ -911,6 +919,9 @@
 
       }
 
+      /* حفظ المحادثات بعد الحذف */
+      saveConversations();
+
       if (!currentConversationId) {
 
         localStorage.removeItem(
@@ -930,8 +941,6 @@
         currentConversationId
       );
 
-      saveConversations();
-
       renderHistory();
 
       renderConversation();
@@ -946,58 +955,73 @@
     function renderHistory() {
 
       const history =
-        document.getElementById("history");
+        document.getElementById(
+          "history"
+        );
 
       history.innerHTML = "";
 
-      conversations.forEach(conversation => {
+      conversations.forEach(
+        conversation => {
 
-        const item =
-          document.createElement("div");
-
-        item.className =
-          "history-item"
-          + (
-            conversation.id === currentConversationId
-              ? " active"
-              : ""
-          );
-
-        item.onclick = () =>
-          openConversation(conversation.id);
-
-        const name =
-          document.createElement("div");
-
-        name.className =
-          "history-name";
-
-        name.textContent =
-          conversation.title;
-
-        const deleteButton =
-          document.createElement("button");
-
-        deleteButton.className =
-          "delete-history";
-
-        deleteButton.textContent =
-          "×";
-
-        deleteButton.onclick =
-          (event) =>
-            deleteConversation(
-              conversation.id,
-              event
+          const item =
+            document.createElement(
+              "div"
             );
 
-        item.appendChild(name);
+          item.className =
+            "history-item"
+            + (
+              conversation.id ===
+              currentConversationId
+                ? " active"
+                : ""
+            );
 
-        item.appendChild(deleteButton);
+          item.onclick = () =>
+            openConversation(
+              conversation.id
+            );
 
-        history.appendChild(item);
+          const name =
+            document.createElement(
+              "div"
+            );
 
-      });
+          name.className =
+            "history-name";
+
+          name.textContent =
+            conversation.title;
+
+          const deleteButton =
+            document.createElement(
+              "button"
+            );
+
+          deleteButton.className =
+            "delete-history";
+
+          deleteButton.textContent =
+            "×";
+
+          deleteButton.onclick =
+            event =>
+              deleteConversation(
+                conversation.id,
+                event
+              );
+
+          item.appendChild(name);
+
+          item.appendChild(
+            deleteButton
+          );
+
+          history.appendChild(item);
+
+        }
+      );
 
     }
 
@@ -1009,10 +1033,9 @@
     function renderConversation() {
 
       const chat =
-        document.getElementById("chat");
-
-      const welcome =
-        document.getElementById("welcome");
+        document.getElementById(
+          "chat"
+        );
 
       chat.innerHTML = "";
 
@@ -1032,15 +1055,17 @@
 
       }
 
-      conversation.messages.forEach(message => {
+      conversation.messages.forEach(
+        message => {
 
-        addMessageToScreen(
-          message.role,
-          message.content,
-          message.image
-        );
+          addMessageToScreen(
+            message.role,
+            message.content,
+            message.image
+          );
 
-      });
+        }
+      );
 
       scrollToBottom();
 
@@ -1054,7 +1079,9 @@
     function createWelcome() {
 
       const welcome =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       welcome.className =
         "welcome";
@@ -1089,7 +1116,9 @@
     function resetChat() {
 
       const chat =
-        document.getElementById("chat");
+        document.getElementById(
+          "chat"
+        );
 
       chat.innerHTML = "";
 
@@ -1107,10 +1136,11 @@
     function escapeHtml(text) {
 
       const div =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
-      div.textContent =
-        text;
+      div.textContent = text;
 
       return div.innerHTML;
 
@@ -1154,10 +1184,14 @@
     ) {
 
       const chat =
-        document.getElementById("chat");
+        document.getElementById(
+          "chat"
+        );
 
       const message =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       message.className =
         "message "
@@ -1168,7 +1202,9 @@
         );
 
       const messageContent =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       messageContent.className =
         "message-content";
@@ -1176,7 +1212,9 @@
       if (image) {
 
         const imageElement =
-          document.createElement("img");
+          document.createElement(
+            "img"
+          );
 
         imageElement.src =
           image;
@@ -1193,7 +1231,9 @@
       if (content) {
 
         const textElement =
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
 
         textElement.innerHTML =
           formatText(content);
@@ -1207,7 +1247,9 @@
       if (role === "assistant") {
 
         const copyButton =
-          document.createElement("button");
+          document.createElement(
+            "button"
+          );
 
         copyButton.className =
           "copy-button";
@@ -1220,19 +1262,22 @@
 
             try {
 
-              await navigator.clipboard.writeText(
-                content
-              );
+              await navigator
+                .clipboard
+                .writeText(content);
 
               copyButton.textContent =
                 "تم النسخ ✓";
 
-              setTimeout(() => {
+              setTimeout(
+                () => {
 
-                copyButton.textContent =
-                  "نسخ";
+                  copyButton.textContent =
+                    "نسخ";
 
-              }, 1500);
+                },
+                1500
+              );
 
             } catch (error) {
 
@@ -1381,6 +1426,10 @@
           conversation.messages;
 
 
+        /* =========================
+           الاتصال بالـBackend
+        ========================= */
+
         const response =
           await fetch(
             "https://nova-ai-8v6o.onrender.com/api/chat",
@@ -1429,7 +1478,8 @@
             msg =>
               !(
                 msg.role === "assistant" &&
-                msg.content === "جاري التفكير..."
+                msg.content ===
+                "جاري التفكير..."
               )
           );
 
@@ -1471,7 +1521,8 @@
             msg =>
               !(
                 msg.role === "assistant" &&
-                msg.content === "جاري التفكير..."
+                msg.content ===
+                "جاري التفكير..."
               )
           );
 
@@ -1561,9 +1612,7 @@
         );
 
 
-      preview.src =
-        "";
-
+      preview.src = "";
 
       preview.style.display =
         "none";
@@ -1575,8 +1624,7 @@
         );
 
 
-      input.value =
-        "";
+      input.value = "";
 
     }
 
@@ -1626,14 +1674,19 @@
     function scrollToBottom() {
 
       const chat =
-        document.getElementById("chat");
+        document.getElementById(
+          "chat"
+        );
 
-      setTimeout(() => {
+      setTimeout(
+        () => {
 
-        chat.scrollTop =
-          chat.scrollHeight;
+          chat.scrollTop =
+            chat.scrollHeight;
 
-      }, 50);
+        },
+        50
+      );
 
     }
 
