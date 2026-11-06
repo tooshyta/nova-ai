@@ -5,6 +5,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- إعدادات تطبيق Nova AI -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0b0e13">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Nova AI">
+
 <title>Nova AI - مساعد ذكاء اصطناعي</title>
 <meta name="description" content="Nova AI مساعد ذكاء اصطناعي للإجابة عن الأسئلة وتحليل الصور.">
 <link rel="icon" type="image/png" href="/logo.png">
@@ -1461,7 +1468,6 @@ async function sendMessage() {
   let typingTimer = null;
   let typingWaiters = [];
 
-  // تحويل النص إلى أحرف Unicode سليمة
   function getCharacters(text) {
     return Array.from(text);
   }
@@ -1484,7 +1490,6 @@ async function sendMessage() {
       return;
     }
 
-    // حرف واحد غالبًا، وزيادة بسيطة عند تراكم النص
     let count = 1;
 
     if (remaining > TYPE_BACKLOG_THRESHOLD) {
@@ -1577,7 +1582,6 @@ async function sendMessage() {
       throw new Error("لم يتم الحصول على إجابة.");
     }
 
-    // انتظار اكتمال ظهور جميع الحروف
     await waitForTyping();
 
     if (!live) {
