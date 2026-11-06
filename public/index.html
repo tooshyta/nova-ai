@@ -1,1518 +1,1451 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Nova AI - مساعد ذكاء اصطناعي</title>
-
-  <meta
-    name="description"
-    content="Nova AI هو مساعد ذكاء اصطناعي يساعدك في الإجابة عن الأسئلة وتحليل الصور."
-  >
-
-  <meta name="application-name" content="Nova AI">
-
-  <link rel="icon" type="image/png" sizes="512x512" href="/logo.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/logo.png">
-  <link rel="icon" type="image/png" sizes="48x48" href="/logo.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/logo.png">
-
-  <meta property="og:site_name" content="Nova AI">
-  <meta property="og:title" content="Nova AI - مساعد ذكاء اصطناعي">
-  <meta
-    property="og:description"
-    content="Nova AI هو مساعد ذكاء اصطناعي يساعدك في الإجابة عن الأسئلة وتحليل الصور."
-  >
-  <meta
-    property="og:image"
-    content="https://nova-ai-frontend-yhuy.onrender.com/logo.png"
-  >
-  <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="512">
-  <meta property="og:image:height" content="512">
-  <meta
-    property="og:url"
-    content="https://nova-ai-frontend-yhuy.onrender.com/"
-  >
-  <meta property="og:type" content="website">
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      font-family: Arial, sans-serif;
-      background: #0b0e13;
-      color: white;
-      overflow: hidden;
-    }
-
-    body {
-      display: flex;
-    }
-
-    /* LOGO */
-
-    .top-logo {
-      position: fixed;
-      top: 10px;
-      left: 15px;
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      text-decoration: none;
-      color: white;
-      z-index: 300;
-      direction: ltr;
-      cursor: pointer;
-    }
-
-    .top-logo img {
-      width: 40px;
-      height: 40px;
-      object-fit: contain;
-      border-radius: 12px;
-      border: 1px solid #303541;
-      background: transparent;
-      display: block;
-    }
-
-    .top-logo span {
-      font-size: 17px;
-      font-weight: bold;
-      white-space: nowrap;
-    }
-
-    /* SIDEBAR */
-
-    .sidebar {
-      width: 270px;
-      height: 100vh;
-      background: #10131a;
-      border-left: 1px solid #252a33;
-      display: flex;
-      flex-direction: column;
-      padding: 15px;
-      flex-shrink: 0;
-      z-index: 100;
-    }
-
-    .sidebar-title {
-      font-size: 21px;
-      font-weight: bold;
-      margin-bottom: 18px;
-      text-align: right;
-    }
-
-    .new-chat {
-      width: 100%;
-      border: none;
-      border-radius: 10px;
-      background: #202631;
-      color: white;
-      padding: 12px;
-      font-size: 15px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .new-chat:hover {
-      background: #2b3340;
-    }
-
-    .history-title {
-      margin-top: 22px;
-      margin-bottom: 10px;
-      color: #9ca3af;
-      font-size: 13px;
-    }
-
-    .history {
-      flex: 1;
-      overflow-y: auto;
-    }
-
-    .history-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-bottom: 4px;
-      transition: 0.2s;
-    }
-
-    .history-item:hover {
-      background: #1b2029;
-    }
-
-    .history-item.active {
-      background: #222936;
-    }
-
-    .history-name {
-      flex: 1;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      font-size: 14px;
-    }
-
-    .delete-history {
-      background: transparent;
-      border: none;
-      color: #777;
-      cursor: pointer;
-      font-size: 16px;
-      padding: 2px 5px;
-    }
-
-    .delete-history:hover {
-      color: #ff5c5c;
-    }
-
-    /* MAIN */
-
-    .main {
-      flex: 1;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    /* HEADER */
-
-    .header {
-      height: 60px;
-      border-bottom: 1px solid #252a33;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .header-title {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .menu-button {
-      display: none;
-      position: absolute;
-      right: 15px;
-      background: #202631;
-      border: none;
-      color: white;
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 20px;
-    }
-
-    /* CHAT */
-
-    .chat {
-      flex: 1;
-      overflow-y: auto;
-      padding: 25px;
-      scroll-behavior: smooth;
-    }
-
-    .welcome {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      text-align: center;
-      gap: 12px;
-    }
-
-    .welcome-logo {
-      width: 70px;
-      height: 70px;
-      object-fit: contain;
-      border-radius: 18px;
-      border: 1px solid #303541;
-      background: transparent;
-      margin-bottom: 5px;
-      display: block;
-    }
-
-    .welcome h1 {
-      margin: 0;
-      font-size: 28px;
-    }
-
-    .welcome p {
-      margin: 0;
-      color: #9ca3af;
-      font-size: 15px;
-    }
-
-    /* MESSAGE */
-
-    .message {
-      display: flex;
-      margin-bottom: 18px;
-      width: 100%;
-    }
-
-    .message.user {
-      justify-content: flex-start;
-    }
-
-    .message.ai {
-      justify-content: flex-end;
-    }
-
-    .message-content {
-      max-width: 80%;
-      padding: 12px 15px;
-      border-radius: 14px;
-      line-height: 1.7;
-      font-size: 15px;
-      word-wrap: break-word;
-    }
-
-    .message.user .message-content {
-      background: #202631;
-      border-bottom-left-radius: 5px;
-    }
-
-    .message.ai .message-content {
-      background: #151a22;
-      border: 1px solid #252b35;
-      border-bottom-right-radius: 5px;
-    }
-
-    .message-image {
-      max-width: 300px;
-      max-height: 300px;
-      object-fit: contain;
-      border-radius: 12px;
-      display: block;
-      margin-bottom: 8px;
-    }
-
-    .copy-button {
-      display: block;
-      margin-top: 8px;
-      background: transparent;
-      border: 1px solid #303641;
-      color: #9ca3af;
-      padding: 5px 9px;
-      border-radius: 7px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    .copy-button:hover {
-      background: #202631;
-      color: white;
-    }
-
-    /* THINKING DOTS */
-
-    .thinking-dots {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      height: 24px;
-      direction: ltr;
-    }
-
-    .thinking-dots span {
-      width: 7px;
-      height: 7px;
-      background: #9ca3af;
-      border-radius: 50%;
-      display: block;
-      animation: thinkingBounce 1.2s infinite ease-in-out;
-    }
-
-    .thinking-dots span:nth-child(2) {
-      animation-delay: 0.15s;
-    }
-
-    .thinking-dots span:nth-child(3) {
-      animation-delay: 0.3s;
-    }
-
-    @keyframes thinkingBounce {
-      0%,
-      60%,
-      100% {
-        transform: translateY(0);
-        opacity: 0.5;
-      }
-
-      30% {
-        transform: translateY(-6px);
-        opacity: 1;
-      }
-    }
-
-    /* INPUT AREA */
-
-    .input-area {
-      padding: 15px 20px 20px;
-      flex-shrink: 0;
-    }
-
-    .input-box {
-      max-width: 900px;
-      margin: auto;
-      background: #151a22;
-      border: 1px solid #303641;
-      border-radius: 16px;
-      padding: 10px;
-      display: flex;
-      align-items: flex-end;
-      gap: 8px;
-    }
-
-    textarea {
-      flex: 1;
-      resize: none;
-      max-height: 160px;
-      min-height: 42px;
-      background: transparent;
-      border: none;
-      outline: none;
-      color: white;
-      font-family: inherit;
-      font-size: 15px;
-      line-height: 1.5;
-      padding: 9px;
-    }
-
-    textarea::placeholder {
-      color: #737b88;
-    }
-
-    .input-button {
-      width: 40px;
-      height: 40px;
-      border: none;
-      border-radius: 10px;
-      background: #202631;
-      color: white;
-      cursor: pointer;
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-
-    .input-button:hover {
-      background: #2b3340;
-    }
-
-    .send-button {
-      background: #ffffff;
-      color: #000000;
-      font-size: 17px;
-      font-weight: bold;
-    }
-
-    .send-button:hover {
-      background: #dddddd;
-    }
-
-    .image-preview {
-      max-width: 80px;
-      max-height: 80px;
-      border-radius: 10px;
-      object-fit: contain;
-      display: none;
-      margin: 0 4px;
-    }
-
-    /* MOBILE */
-
-    @media (max-width: 700px) {
-      html,
-      body {
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-      }
-
-      .sidebar {
-        position: fixed;
-        right: -280px;
-        top: 0;
-        height: 100%;
-        transition: right 0.25s ease;
-        z-index: 200;
-      }
-
-      .sidebar.open {
-        right: 0;
-      }
-
-      .main {
-        width: 100%;
-        height: 100dvh;
-        min-height: 0;
-      }
-
-      .header {
-        height: 55px;
-        flex-shrink: 0;
-      }
-
-      .menu-button {
-        display: block;
-      }
-
-      .top-logo {
-        left: 10px;
-        top: 8px;
-      }
-
-      .top-logo img {
-        width: 36px;
-        height: 36px;
-        object-fit: contain;
-        border-radius: 10px;
-      }
-
-      .top-logo span {
-        font-size: 14px;
-      }
-
-      .chat {
-        flex: 1;
-        min-height: 0;
-        overflow-y: auto;
-        padding: 15px 10px;
-      }
-
-      .message-content {
-        max-width: 92%;
-        font-size: 14px;
-        padding: 10px 12px;
-      }
-
-      .input-area {
-        width: 100%;
-        padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
-        flex-shrink: 0;
-        background: #0b0e13;
-      }
-
-      .input-box {
-        width: 100%;
-        max-width: none;
-        padding: 7px;
-        border-radius: 14px;
-        gap: 5px;
-      }
-
-      textarea {
-        min-height: 40px;
-        max-height: 100px;
-        font-size: 15px;
-        padding: 8px 5px;
-      }
-
-      .input-button {
-        width: 38px;
-        height: 38px;
-        flex-shrink: 0;
-      }
-
-      .image-preview {
-        max-width: 55px;
-        max-height: 55px;
-      }
-
-      .welcome {
-        padding: 20px 10px;
-      }
-
-      .welcome-logo {
-        width: 60px;
-        height: 60px;
-      }
-
-      .welcome h1 {
-        font-size: 22px;
-      }
-
-      .welcome p {
-        font-size: 14px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Nova AI - مساعد ذكاء اصطناعي</title>
+<meta name="description" content="Nova AI مساعد ذكاء اصطناعي للإجابة عن الأسئلة وتحليل الصور.">
+<link rel="icon" type="image/png" href="/logo.png">
+
+<meta property="og:title" content="Nova AI - مساعد ذكاء اصطناعي">
+<meta property="og:description" content="مساعد ذكاء اصطناعي للإجابة عن الأسئلة وتحليل الصور.">
+<meta property="og:image" content="https://nova-ai-frontend-yhuy.onrender.com/logo.png">
+<meta property="og:url" content="https://nova-ai-frontend-yhuy.onrender.com/">
+<meta property="og:type" content="website">
+
+<style>
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  background: #0b0e13;
+  color: white;
+  overflow: hidden;
+}
+
+body { display: flex; }
+
+button { font-family: inherit; }
+
+.top-logo {
+  position: fixed;
+  top: 10px;
+  left: 15px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  color: white;
+  z-index: 300;
+  direction: ltr;
+}
+
+.top-logo img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 1px solid #303541;
+}
+
+.top-logo span {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.sidebar {
+  width: 270px;
+  height: 100%;
+  background: #10131a;
+  border-left: 1px solid #252a33;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  flex-shrink: 0;
+  z-index: 201;
+}
+
+.sidebar-title {
+  font-size: 21px;
+  font-weight: bold;
+  margin-bottom: 18px;
+}
+
+.new-chat {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  background: #202631;
+  color: white;
+  padding: 12px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.new-chat:hover,
+.input-button:hover {
+  background: #303846;
+}
+
+.history-title {
+  margin-top: 22px;
+  margin-bottom: 10px;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.history {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 4px;
+}
+
+.history-item:hover,
+.history-item.active {
+  background: #222936;
+}
+
+.history-name {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+}
+
+.delete-history {
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.delete-history:hover { color: #ff5c5c; }
+
+.main {
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  height: 60px;
+  border-bottom: 1px solid #252a33;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.menu-button {
+  display: none;
+  position: absolute;
+  right: 15px;
+  background: #202631;
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.chat {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 25px;
+  scroll-behavior: smooth;
+}
+
+.welcome {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  gap: 12px;
+}
+
+.welcome-logo {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  border-radius: 18px;
+  border: 1px solid #303541;
+}
+
+.welcome h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.welcome p {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 15px;
+}
+
+.message {
+  display: flex;
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.message.user { justify-content: flex-start; }
+.message.ai { justify-content: flex-end; }
+
+.message-content {
+  max-width: 85%;
+  padding: 12px 15px;
+  border-radius: 14px;
+  line-height: 1.8;
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
+.message.user .message-content {
+  background: #202631;
+  border-bottom-left-radius: 5px;
+}
+
+.message.ai .message-content {
+  background: #151a22;
+  border: 1px solid #252b35;
+  border-bottom-right-radius: 5px;
+}
+
+.message-image {
+  max-width: 300px;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 12px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.copy-button {
+  display: block;
+  margin-top: 10px;
+  background: transparent;
+  border: 1px solid #303641;
+  color: #9ca3af;
+  padding: 5px 9px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.copy-button:hover {
+  background: #202631;
+  color: white;
+}
+
+/* Markdown */
+
+.markdown-body {
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+  line-height: 1.5;
+  margin: 16px 0 8px;
+  color: #fff;
+}
+
+.markdown-body h1 { font-size: 23px; }
+.markdown-body h2 { font-size: 20px; }
+.markdown-body h3 { font-size: 17px; }
+
+.markdown-body p {
+  margin: 7px 0;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-right: 25px;
+  margin: 8px 0;
+}
+
+.markdown-body li {
+  margin: 5px 0;
+}
+
+.markdown-body strong { color: #fff; }
+
+.markdown-body blockquote {
+  border-right: 3px solid #64748b;
+  margin: 10px 0;
+  padding: 5px 12px;
+  color: #b7c0ce;
+  background: #202631;
+  border-radius: 5px;
+}
+
+.markdown-body pre {
+  direction: ltr;
+  text-align: left;
+  background: #090c11;
+  border: 1px solid #303641;
+  padding: 14px;
+  border-radius: 10px;
+  overflow-x: auto;
+  margin: 10px 0;
+}
+
+.markdown-body pre code {
+  background: transparent;
+  padding: 0;
+  white-space: pre;
+}
+
+.markdown-body code {
+  direction: ltr;
+  background: #252c38;
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-family: Consolas, monospace;
+  font-size: .9em;
+}
+
+.markdown-body a {
+  color: #75baff;
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+
+.markdown-body hr {
+  border: 0;
+  border-top: 1px solid #303641;
+  margin: 15px 0;
+}
+
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+  display: block;
+  overflow-x: auto;
+}
+
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid #303641;
+  padding: 8px;
+  text-align: right;
+}
+
+.markdown-body th { background: #202631; }
+
+/* Thinking */
+
+.thinking-dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  direction: ltr;
+}
+
+.thinking-dots span {
+  width: 7px;
+  height: 7px;
+  background: #9ca3af;
+  border-radius: 50%;
+  animation: bounce 1.2s infinite ease-in-out;
+}
+
+.thinking-dots span:nth-child(2) { animation-delay: .15s; }
+.thinking-dots span:nth-child(3) { animation-delay: .3s; }
+
+@keyframes bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: .5; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* Input */
+
+.input-area {
+  padding: 15px 20px 20px;
+  flex-shrink: 0;
+}
+
+.input-box {
+  max-width: 900px;
+  margin: auto;
+  background: #151a22;
+  border: 1px solid #303641;
+  border-radius: 16px;
+  padding: 10px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+textarea {
+  flex: 1;
+  resize: none;
+  max-height: 160px;
+  min-height: 42px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+  padding: 9px;
+}
+
+textarea::placeholder { color: #737b88; }
+
+.input-button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: #202631;
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.input-button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.send-button {
+  background: white;
+  color: black;
+  font-weight: bold;
+}
+
+.send-button:hover { background: #ddd; }
+
+.image-preview-wrap {
+  position: relative;
+  display: none;
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+.image-preview {
+  max-width: 75px;
+  max-height: 75px;
+  border-radius: 10px;
+  object-fit: contain;
+  display: block;
+}
+
+.remove-image {
+  position: absolute;
+  top: -7px;
+  left: -7px;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: #d83b3b;
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.mobile-overlay { display: none; }
+
+@media (max-width: 700px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100dvh;
+    width: 270px;
+    transform: translateX(100%);
+    transition: transform .25s ease;
+    z-index: 201;
+  }
+
+  .sidebar.open { transform: translateX(0); }
+
+  .mobile-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    z-index: 200;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s ease, visibility .25s ease;
+  }
+
+  .mobile-overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .main {
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+  }
+
+  .header { height: 55px; }
+  .menu-button { display: block; }
+
+  .top-logo { left: 10px; top: 8px; }
+  .top-logo img { width: 36px; height: 36px; }
+  .top-logo span { font-size: 14px; }
+
+  .chat { padding: 15px 10px; }
+
+  .message-content {
+    max-width: 94%;
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .input-area {
+    width: 100%;
+    padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+    background: #0b0e13;
+  }
+
+  .input-box {
+    width: 100%;
+    padding: 7px;
+    gap: 5px;
+  }
+
+  textarea {
+    min-height: 40px;
+    max-height: 100px;
+    padding: 8px 5px;
+  }
+
+  .input-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .image-preview {
+    max-width: 55px;
+    max-height: 55px;
+  }
+
+  .welcome-logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  .welcome h1 { font-size: 22px; }
+  .welcome p { font-size: 14px; }
+}
+</style>
 </head>
 
 <body>
 
-  <!-- LOGO -->
+<a href="/" class="top-logo" title="Nova AI">
+  <img src="/logo.png" alt="Nova AI">
+  <span>Nova AI</span>
+</a>
 
-  <a href="/" class="top-logo" title="Nova AI">
-    <img src="/logo.png" alt="Nova AI">
-    <span>Nova AI</span>
-  </a>
+<div class="mobile-overlay" id="mobileOverlay"></div>
 
-  <!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-title">Nova AI</div>
 
-  <aside class="sidebar" id="sidebar">
+  <button class="new-chat" id="newChatButton">
+    ＋ محادثة جديدة
+  </button>
 
-    <div class="sidebar-title">
-      Nova AI
+  <div class="history-title">المحادثات</div>
+  <div class="history" id="history"></div>
+</aside>
+
+<main class="main">
+
+  <header class="header">
+    <button class="menu-button" id="menuButton" aria-label="القائمة">☰</button>
+    <div class="header-title">Nova AI</div>
+  </header>
+
+  <section class="chat" id="chat">
+    <div class="welcome">
+      <img class="welcome-logo" src="/logo.png" alt="Nova AI">
+      <h1>مرحبًا بك في Nova AI</h1>
+      <p>اسألني أي شيء وسأحاول مساعدتك.</p>
     </div>
+  </section>
 
-    <button class="new-chat" onclick="createNewConversation()">
-      ＋ محادثة جديدة
-    </button>
+  <div class="input-area">
+    <div class="input-box">
 
-    <div class="history-title">
-      المحادثات
-    </div>
+      <input type="file" id="imageInput" accept="image/*" hidden>
 
-    <div class="history" id="history"></div>
-
-  </aside>
-
-  <!-- MAIN -->
-
-  <main class="main">
-
-    <header class="header">
-
-      <button class="menu-button" onclick="openMobileMenu()">
-        ☰
+      <button class="input-button" id="attachButton" title="إضافة صورة">
+        📎
       </button>
 
-      <div class="header-title">
-        Nova AI
+      <div class="image-preview-wrap" id="imagePreviewWrap">
+        <img id="imagePreview" class="image-preview" alt="معاينة الصورة">
+        <button class="remove-image" id="removeImageButton" title="إزالة الصورة">×</button>
       </div>
 
-    </header>
+      <textarea
+        id="messageInput"
+        placeholder="اكتب رسالتك..."
+        rows="1"
+      ></textarea>
 
-    <!-- CHAT -->
-
-    <section class="chat" id="chat">
-
-      <div class="welcome" id="welcome">
-
-        <img class="welcome-logo" src="/logo.png" alt="Nova AI">
-
-        <h1>
-          مرحبًا بك في Nova AI
-        </h1>
-
-        <p>
-          اسألني أي شيء وسأحاول مساعدتك.
-        </p>
-
-      </div>
-
-    </section>
-
-    <!-- INPUT -->
-
-    <div class="input-area">
-
-      <div class="input-box">
-
-        <input
-          type="file"
-          id="imageInput"
-          accept="image/*"
-          style="display:none"
-          onchange="handleImageUpload(event)"
-        >
-
-        <button
-          class="input-button"
-          onclick="document.getElementById('imageInput').click()"
-          title="إضافة صورة"
-        >
-          📎
-        </button>
-
-        <img
-          id="imagePreview"
-          class="image-preview"
-          alt="صورة"
-        >
-
-        <textarea
-          id="messageInput"
-          placeholder="اكتب رسالتك..."
-          rows="1"
-          oninput="autoResize(this)"
-          onkeydown="handleEnter(event)"
-        ></textarea>
-
-        <button
-          class="input-button send-button"
-          onclick="sendMessage()"
-          title="إرسال"
-        >
-          ↑
-        </button>
-
-      </div>
+      <button class="input-button send-button" id="sendButton" title="إرسال">
+        ↑
+      </button>
 
     </div>
+  </div>
 
-  </main>
+</main>
 
-  <!-- JAVASCRIPT -->
+<script>
+"use strict";
 
-  <script>
+/* إعداد الخوادم */
 
-    let conversations =
-      JSON.parse(
-        localStorage.getItem("nova_conversations") || "[]"
-      );
+const CLOUDFLARE_URL =
+  "https://nova-ai-worker.saidaabou216.workers.dev/api/chat";
 
-    let currentConversationId =
-      localStorage.getItem("nova_current_conversation") || null;
+const RENDER_URL =
+  "https://nova-ai-8v6o.onrender.com/api/chat";
 
-    let selectedImage = null;
+const MAX_HISTORY_MESSAGES = 10;
+const MAX_HISTORY_IMAGES = 2;
+const PRIMARY_TIMEOUT = 30000;
 
+/* عناصر الصفحة */
 
-    function saveConversations() {
+const $ = id => document.getElementById(id);
 
-      localStorage.setItem(
-        "nova_conversations",
-        JSON.stringify(conversations)
-      );
+let conversations = [];
 
-    }
+try {
+  const saved = JSON.parse(
+    localStorage.getItem("nova_conversations") || "[]"
+  );
 
+  conversations = Array.isArray(saved) ? saved : [];
+} catch {
+  conversations = [];
+}
 
-    function createId() {
+let currentConversationId =
+  localStorage.getItem("nova_current_conversation") || null;
 
-      return Date.now().toString()
-        + Math.random().toString(36).substring(2);
+let selectedImage = null;
+let isSending = false;
 
-    }
+/* المحادثات */
 
+function saveConversations() {
+  try {
+    localStorage.setItem(
+      "nova_conversations",
+      JSON.stringify(conversations)
+    );
+  } catch (error) {
+    console.error("تعذر حفظ المحادثات:", error);
+  }
+}
 
-    function getCurrentConversation() {
+function createId() {
+  return Date.now().toString() +
+    Math.random().toString(36).slice(2);
+}
 
-      return conversations.find(
-        c => c.id === currentConversationId
-      );
+function getCurrentConversation() {
+  return conversations.find(
+    c => c.id === currentConversationId
+  );
+}
 
-    }
+function createTitle(text) {
+  const clean = (text || "").trim();
 
+  if (!clean) return "محادثة جديدة";
 
-    function createTitle(text) {
+  return clean.length > 30
+    ? clean.slice(0, 30) + "..."
+    : clean;
+}
 
-      text = text.trim();
+function createNewConversation() {
+  const conversation = {
+    id: createId(),
+    title: "محادثة جديدة",
+    messages: []
+  };
 
-      if (!text) {
-        return "محادثة جديدة";
-      }
+  conversations.unshift(conversation);
 
-      return text.length > 30
-        ? text.substring(0, 30) + "..."
-        : text;
+  currentConversationId = conversation.id;
 
-    }
+  localStorage.setItem(
+    "nova_current_conversation",
+    currentConversationId
+  );
 
+  saveConversations();
+  renderHistory();
+  renderConversation();
+  closeMobileMenu();
 
-    function createNewConversation() {
+  $("messageInput").focus();
+}
 
-      const conversation = {
-        id: createId(),
-        title: "محادثة جديدة",
-        messages: []
-      };
-
-      conversations.unshift(conversation);
-
-      currentConversationId = conversation.id;
-
-      localStorage.setItem(
-        "nova_current_conversation",
-        currentConversationId
-      );
-
-      saveConversations();
-      renderHistory();
-      renderConversation();
-      closeMobileMenu();
-
-    }
-
-
-    function openConversation(id) {
-
-      currentConversationId = id;
-
-      localStorage.setItem(
-        "nova_current_conversation",
-        id
-      );
-
-      renderHistory();
-      renderConversation();
-      closeMobileMenu();
-
-    }
-
-
-    function deleteConversation(id, event) {
-
-      if (event) {
-        event.stopPropagation();
-      }
-
-      conversations = conversations.filter(
-        c => c.id !== id
-      );
-
-      if (currentConversationId === id) {
-
-        currentConversationId =
-          conversations.length
-            ? conversations[0].id
-            : null;
-
-      }
-
-      saveConversations();
-
-      if (!currentConversationId) {
-
-        localStorage.removeItem(
-          "nova_current_conversation"
-        );
-
-        renderHistory();
-        renderConversation();
-
-        return;
-
-      }
-
-      localStorage.setItem(
-        "nova_current_conversation",
-        currentConversationId
-      );
-
-      renderHistory();
-      renderConversation();
-
-    }
-
-
-    function renderHistory() {
-
-      const history =
-        document.getElementById("history");
-
-      history.innerHTML = "";
-
-      conversations.forEach(conversation => {
-
-        const item = document.createElement("div");
-
-        item.className =
-          "history-item" +
-          (
-            conversation.id === currentConversationId
-              ? " active"
-              : ""
-          );
-
-        item.onclick = () =>
-          openConversation(conversation.id);
-
-        const name = document.createElement("div");
-
-        name.className = "history-name";
-        name.textContent = conversation.title;
-
-        const deleteButton =
-          document.createElement("button");
-
-        deleteButton.className = "delete-history";
-        deleteButton.textContent = "×";
-
-        deleteButton.onclick = event =>
-          deleteConversation(conversation.id, event);
-
-        item.appendChild(name);
-        item.appendChild(deleteButton);
-
-        history.appendChild(item);
-
-      });
-
-    }
-
-
-    function renderConversation() {
-
-      const chat = document.getElementById("chat");
-
-      chat.innerHTML = "";
-
-      const conversation = getCurrentConversation();
-
-      if (
-        !conversation ||
-        conversation.messages.length === 0
-      ) {
-
-        chat.appendChild(createWelcome());
-
-        return;
-
-      }
-
-      conversation.messages.forEach(message => {
-
-        addMessageToScreen(
-          message.role,
-          message.content,
-          message.image
-        );
-
-      });
-
-      scrollToBottom();
-
-    }
-
-
-    function createWelcome() {
-
-      const welcome = document.createElement("div");
-
-      welcome.className = "welcome";
-
-      welcome.innerHTML = `
-
-        <img
-          class="welcome-logo"
-          src="/logo.png"
-          alt="Nova AI"
-        >
-
-        <h1>
-          مرحبًا بك في Nova AI
-        </h1>
-
-        <p>
-          اسألني أي شيء وسأحاول مساعدتك.
-        </p>
-
-      `;
-
-      return welcome;
-
-    }
-
-
-    function resetChat() {
-
-      const chat = document.getElementById("chat");
-
-      chat.innerHTML = "";
-
-      chat.appendChild(createWelcome());
-
-    }
-
-
-    function escapeHtml(text) {
-
-      const div = document.createElement("div");
-
-      div.textContent = text;
-
-      return div.innerHTML;
-
-    }
-
-
-    function formatText(text) {
-
-      let formatted = escapeHtml(text);
-
-      formatted = formatted.replace(
-        /\*\*(.*?)\*\*/g,
-        "<strong>$1</strong>"
-      );
-
-      formatted = formatted.replace(/\n/g, "<br>");
-
-      return formatted;
-
-    }
-
-
-    function addMessageToScreen(role, content, image) {
-
-      const chat = document.getElementById("chat");
-
-      const message = document.createElement("div");
-
-      message.className =
-        "message " +
-        (
-          role === "user"
-            ? "user"
-            : "ai"
-        );
-
-      const messageContent =
-        document.createElement("div");
-
-      messageContent.className = "message-content";
-
-      if (image) {
-
-        const imageElement =
-          document.createElement("img");
-
-        imageElement.src = image;
-        imageElement.className = "message-image";
-
-        messageContent.appendChild(imageElement);
-
-      }
-
-      if (content) {
-
-        const textElement =
-          document.createElement("div");
-
-        textElement.innerHTML = formatText(content);
-
-        messageContent.appendChild(textElement);
-
-      }
-
-      if (
-        role === "assistant" &&
-        content !== "جاري التفكير..."
-      ) {
-
-        const copyButton =
-          document.createElement("button");
-
-        copyButton.className = "copy-button";
-        copyButton.textContent = "نسخ";
-
-        copyButton.onclick = async () => {
-
-          try {
-
-            await navigator.clipboard.writeText(content);
-
-            copyButton.textContent = "تم النسخ ✓";
-
-            setTimeout(() => {
-              copyButton.textContent = "نسخ";
-            }, 1500);
-
-          } catch (error) {
-
-            console.error(error);
-
-          }
-
-        };
-
-        messageContent.appendChild(copyButton);
-
-      }
-
-      message.appendChild(messageContent);
-
-      chat.appendChild(message);
-
-    }
-
-
-    function addThinkingMessage() {
-
-      const chat = document.getElementById("chat");
-
-      const message = document.createElement("div");
-
-      message.className = "message ai";
-      message.id = "thinkingMessage";
-
-      const messageContent =
-        document.createElement("div");
-
-      messageContent.className = "message-content";
-
-      messageContent.innerHTML = `
-
-        <div class="thinking-dots">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-
-      `;
-
-      message.appendChild(messageContent);
-
-      chat.appendChild(message);
-
-    }
-
-
-    async function sendMessage() {
-
-      const input =
-        document.getElementById("messageInput");
-
-      const message = input.value.trim();
-
-      if (!message && !selectedImage) {
-        return;
-      }
-
-
-      if (!currentConversationId) {
-
-        const conversation = {
-          id: createId(),
-          title: createTitle(message),
-          messages: []
-        };
-
-        conversations.unshift(conversation);
-
-        currentConversationId = conversation.id;
-
-        localStorage.setItem(
-          "nova_current_conversation",
-          currentConversationId
-        );
-
-      }
-
-
-      const conversation = getCurrentConversation();
-
-
-      if (
-        conversation.messages.length === 0 &&
-        message
-      ) {
-
-        conversation.title = createTitle(message);
-
-      }
-
-
-      conversation.messages.push({
-
-        role: "user",
-        content: message,
-        image: selectedImage
-
-      });
-
-
-      saveConversations();
-
-      renderHistory();
-      renderConversation();
-
-
-      const imageToSend = selectedImage;
-
-
-      input.value = "";
-      input.style.height = "auto";
-
-      clearSelectedImage();
-
-
-      addThinkingMessage();
-
-      scrollToBottom();
-
-
-      try {
-
-        const history = conversation.messages;
-
-
-        // تجهيز الطلب مرة واحدة للخادمين
-
-        const requestOptions = {
-
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json"
-          },
-
-          body: JSON.stringify({
-
-            message: message,
-            image: imageToSend,
-            history: history.slice(0, -1)
-
-          })
-
-        };
-
-
-        let response;
-
-
-        // الخادم الأساسي: Cloudflare
-
-        try {
-
-          response = await fetch(
-            "https://nova-ai-worker.saidaabou216.workers.dev/api/chat",
-            requestOptions
-          );
-
-
-          const contentType =
-            response.headers.get("content-type") || "";
-
-
-          if (
-            response.status >= 500 &&
-            !contentType.includes("application/json")
-          ) {
-
-            throw new Error("Cloudflare unavailable");
-
-          }
-
-
-          if (response.status === 429) {
-
-            const errorText =
-              await response.clone().text();
-
-            if (
-              /1027|daily request limit/i.test(errorText)
-            ) {
-
-              throw new Error("Cloudflare request limit");
-
-            }
-
-          }
-
-        } catch (cloudflareError) {
-
-          console.warn(
-            "Cloudflare unavailable, switching to Render:",
-            cloudflareError
-          );
-
-
-          // الخادم الاحتياطي: Render
-
-          response = await fetch(
-            "https://nova-ai-8v6o.onrender.com/api/chat",
-            requestOptions
-          );
-
-        }
-
-
-        if (!response.ok) {
-
-          throw new Error("HTTP " + response.status);
-
-        }
-
-
-        const data = await response.json();
-
-
-        const thinkingMessage =
-          document.getElementById("thinkingMessage");
-
-        if (thinkingMessage) {
-          thinkingMessage.remove();
-        }
-
-
-        const answer =
-          data.reply ||
-          data.message ||
-          data.response ||
-          "لم يتم الحصول على إجابة.";
-
-
-        conversation.messages.push({
-
-          role: "assistant",
-          content: answer,
-          image: null
-
-        });
-
-
-        saveConversations();
-
-        renderConversation();
-        renderHistory();
-
-        scrollToBottom();
-
-
-      } catch (error) {
-
-        console.error(error);
-
-
-        const thinkingMessage =
-          document.getElementById("thinkingMessage");
-
-        if (thinkingMessage) {
-          thinkingMessage.remove();
-        }
-
-
-        conversation.messages.push({
-
-          role: "assistant",
-
-          content:
-            "حدث خطأ أثناء الاتصال بالخادم. حاول مرة أخرى.",
-
-          image: null
-
-        });
-
-
-        saveConversations();
-
-        renderConversation();
-        renderHistory();
-
-      }
-
-    }
-
-
-    // عرض معاينة الصورة
-
-    function showImagePreview(imageData) {
-
-      selectedImage = imageData;
-
-      const preview =
-        document.getElementById("imagePreview");
-
-      preview.src = selectedImage;
-
-      preview.style.display = "block";
-
-    }
-
-
-    // رفع صورة من الملفات
-
-    function handleImageUpload(event) {
-
-      const file = event.target.files[0];
-
-      if (!file) {
-        return;
-      }
-
-      if (!file.type.startsWith("image/")) {
-        return;
-      }
-
-      const reader = new FileReader();
-
-      reader.onload = function(e) {
-
-        showImagePreview(e.target.result);
-
-      };
-
-      reader.readAsDataURL(file);
-
-    }
-
-
-    // لصق الصور مباشرة باستخدام Ctrl + V
-
-    document.addEventListener("paste", function(event) {
-
-      const items = event.clipboardData?.items;
-
-      if (!items) {
-        return;
-      }
-
-      for (const item of items) {
-
-        if (item.type.startsWith("image/")) {
-
-          event.preventDefault();
-
-          const file = item.getAsFile();
-
-          if (!file) {
-            return;
-          }
-
-          const reader = new FileReader();
-
-          reader.onload = function(e) {
-
-            showImagePreview(e.target.result);
-
-          };
-
-          reader.readAsDataURL(file);
-
-          return;
-
-        }
-
-      }
-
+function openConversation(id) {
+  currentConversationId = id;
+
+  localStorage.setItem(
+    "nova_current_conversation",
+    id
+  );
+
+  renderHistory();
+  renderConversation();
+  closeMobileMenu();
+}
+
+function deleteConversation(id, event) {
+  if (event) event.stopPropagation();
+
+  conversations = conversations.filter(
+    c => c.id !== id
+  );
+
+  if (currentConversationId === id) {
+    currentConversationId = conversations[0]?.id || null;
+  }
+
+  if (currentConversationId) {
+    localStorage.setItem(
+      "nova_current_conversation",
+      currentConversationId
+    );
+  } else {
+    localStorage.removeItem("nova_current_conversation");
+  }
+
+  saveConversations();
+  renderHistory();
+  renderConversation();
+}
+
+function renderHistory() {
+  const history = $("history");
+  history.innerHTML = "";
+
+  conversations.forEach(conversation => {
+    const item = document.createElement("div");
+
+    item.className = "history-item" +
+      (conversation.id === currentConversationId ? " active" : "");
+
+    item.addEventListener("click", () => {
+      openConversation(conversation.id);
     });
 
+    const name = document.createElement("div");
+    name.className = "history-name";
+    name.textContent = conversation.title;
 
-    // إزالة الصورة المختارة
+    const del = document.createElement("button");
+    del.className = "delete-history";
+    del.textContent = "×";
+    del.title = "حذف المحادثة";
 
-    function clearSelectedImage() {
+    del.addEventListener("click", event => {
+      deleteConversation(conversation.id, event);
+    });
 
-      selectedImage = null;
+    item.append(name, del);
+    history.appendChild(item);
+  });
+}
 
-      const preview =
-        document.getElementById("imagePreview");
+/* عرض المحادثات */
 
-      preview.src = "";
+function renderConversation() {
+  const chat = $("chat");
+  chat.innerHTML = "";
 
-      preview.style.display = "none";
+  const conversation = getCurrentConversation();
 
+  if (!conversation || !conversation.messages.length) {
+    chat.appendChild(createWelcome());
+    return;
+  }
 
-      const input =
-        document.getElementById("imageInput");
+  conversation.messages.forEach(message => {
+    addMessageToScreen(
+      message.role,
+      message.content,
+      message.image
+    );
+  });
 
-      input.value = "";
+  scrollToBottom();
+}
 
+function createWelcome() {
+  const welcome = document.createElement("div");
+  welcome.className = "welcome";
+
+  const logo = document.createElement("img");
+  logo.className = "welcome-logo";
+  logo.src = "/logo.png";
+  logo.alt = "Nova AI";
+
+  const title = document.createElement("h1");
+  title.textContent = "مرحبًا بك في Nova AI";
+
+  const description = document.createElement("p");
+  description.textContent = "اسألني أي شيء وسأحاول مساعدتك.";
+
+  welcome.append(logo, title, description);
+
+  return welcome;
+}
+
+/* تنسيق Markdown بأمان */
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function formatInline(text) {
+  let result = escapeHTML(text);
+
+  result = result.replace(
+    /`([^`]+)`/g,
+    "<code>$1</code>"
+  );
+
+  result = result.replace(
+    /\*\*(.*?)\*\*/g,
+    "<strong>$1</strong>"
+  );
+
+  result = result.replace(
+    /~~(.*?)~~/g,
+    "<del>$1</del>"
+  );
+
+  result = result.replace(
+    /(^|[^*])\*([^*\n]+)\*/g,
+    "$1<em>$2</em>"
+  );
+
+  result = result.replace(
+    /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+    '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+  );
+
+  result = result.replace(
+    /(https?:\/\/[^\s<]+)/g,
+    '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+  );
+
+  return result;
+}
+
+function formatMarkdown(text) {
+  const lines = String(text ?? "").replace(/\r\n/g, "\n").split("\n");
+
+  let html = "";
+  let inCode = false;
+  let codeLines = [];
+  let listType = null;
+  let inQuote = false;
+
+  function closeList() {
+    if (listType) {
+      html += listType === "ul" ? "</ul>" : "</ol>";
+      listType = null;
     }
+  }
 
-
-    function autoResize(textarea) {
-
-      textarea.style.height = "auto";
-
-      textarea.style.height =
-        Math.min(textarea.scrollHeight, 160) + "px";
-
+  function closeQuote() {
+    if (inQuote) {
+      html += "</blockquote>";
+      inQuote = false;
     }
+  }
 
+  for (const line of lines) {
+    const trimmed = line.trim();
 
-    function handleEnter(event) {
+    if (trimmed.startsWith("```")) {
+      closeList();
+      closeQuote();
 
-      if (
-        event.key === "Enter" &&
-        !event.shiftKey
-      ) {
+      if (inCode) {
+        html += "<pre><code>" +
+          escapeHTML(codeLines.join("\n")) +
+          "</code></pre>";
 
-        event.preventDefault();
-
-        sendMessage();
-
+        codeLines = [];
+        inCode = false;
+      } else {
+        inCode = true;
       }
 
+      continue;
     }
 
-
-    function scrollToBottom() {
-
-      const chat = document.getElementById("chat");
-
-      setTimeout(() => {
-
-        chat.scrollTop = chat.scrollHeight;
-
-      }, 50);
-
+    if (inCode) {
+      codeLines.push(line);
+      continue;
     }
 
-
-    function openMobileMenu() {
-
-      document
-        .getElementById("sidebar")
-        .classList
-        .add("open");
-
+    if (!trimmed) {
+      closeList();
+      closeQuote();
+      continue;
     }
 
+    const heading = trimmed.match(/^(#{1,3})\s+(.+)$/);
 
-    function closeMobileMenu() {
+    if (heading) {
+      closeList();
+      closeQuote();
 
-      document
-        .getElementById("sidebar")
-        .classList
-        .remove("open");
+      const level = heading[1].length;
 
+      html += `<h${level}>${formatInline(heading[2])}</h${level}>`;
+      continue;
     }
 
+    if (/^---+$/.test(trimmed)) {
+      closeList();
+      closeQuote();
+      html += "<hr>";
+      continue;
+    }
 
-    function init() {
+    const quote = trimmed.match(/^>\s?(.*)$/);
 
-      if (
-        !currentConversationId ||
-        !getCurrentConversation()
-      ) {
+    if (quote) {
+      closeList();
 
-        if (conversations.length) {
-
-          currentConversationId = conversations[0].id;
-
-          localStorage.setItem(
-            "nova_current_conversation",
-            currentConversationId
-          );
-
-        }
-
+      if (!inQuote) {
+        html += "<blockquote>";
+        inQuote = true;
       }
 
-      renderHistory();
-
-      renderConversation();
-
+      html += "<p>" + formatInline(quote[1]) + "</p>";
+      continue;
     }
 
+    closeQuote();
 
-    init();
+    const unordered = trimmed.match(/^[-*+]\s+(.+)$/);
+    const ordered = trimmed.match(/^\d+[.)]\s+(.+)$/);
 
-  </script>
+    if (unordered) {
+      if (listType !== "ul") {
+        closeList();
+        html += "<ul>";
+        listType = "ul";
+      }
+
+      html += "<li>" + formatInline(unordered[1]) + "</li>";
+      continue;
+    }
+
+    if (ordered) {
+      if (listType !== "ol") {
+        closeList();
+        html += "<ol>";
+        listType = "ol";
+      }
+
+      html += "<li>" + formatInline(ordered[1]) + "</li>";
+      continue;
+    }
+
+    closeList();
+
+    html += "<p>" + formatInline(trimmed) + "</p>";
+  }
+
+  if (inCode) {
+    html += "<pre><code>" +
+      escapeHTML(codeLines.join("\n")) +
+      "</code></pre>";
+  }
+
+  closeList();
+  closeQuote();
+
+  return html;
+}
+
+function addMessageToScreen(role, content, image) {
+  const message = document.createElement("div");
+
+  message.className =
+    "message " + (role === "user" ? "user" : "ai");
+
+  const box = document.createElement("div");
+  box.className = "message-content";
+
+  if (image) {
+    const img = document.createElement("img");
+
+    img.src = image;
+    img.className = "message-image";
+    img.alt = "الصورة المرسلة";
+
+    box.appendChild(img);
+  }
+
+  if (content) {
+    const text = document.createElement("div");
+
+    text.className = "markdown-body";
+    text.innerHTML = formatMarkdown(content);
+
+    box.appendChild(text);
+  }
+
+  if (role === "assistant" && content) {
+    const copy = document.createElement("button");
+
+    copy.className = "copy-button";
+    copy.textContent = "نسخ";
+
+    copy.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(content);
+
+        copy.textContent = "تم النسخ ✓";
+
+        setTimeout(() => {
+          copy.textContent = "نسخ";
+        }, 1500);
+      } catch {
+        copy.textContent = "تعذر النسخ";
+      }
+    });
+
+    box.appendChild(copy);
+  }
+
+  message.appendChild(box);
+  $("chat").appendChild(message);
+}
+
+/* مؤشر الانتظار */
+
+function addThinkingMessage() {
+  const message = document.createElement("div");
+
+  message.className = "message ai";
+  message.id = "thinkingMessage";
+
+  const box = document.createElement("div");
+  box.className = "message-content";
+
+  box.innerHTML =
+    '<div class="thinking-dots"><span></span><span></span><span></span></div>';
+
+  message.appendChild(box);
+  $("chat").appendChild(message);
+}
+
+function removeThinkingMessage() {
+  $("thinkingMessage")?.remove();
+}
+
+function scrollToBottom() {
+  requestAnimationFrame(() => {
+    const chat = $("chat");
+    chat.scrollTop = chat.scrollHeight;
+  });
+}
+
+/* الصور */
+
+function showImagePreview(dataUrl) {
+  selectedImage = dataUrl;
+
+  $("imagePreview").src = dataUrl;
+  $("imagePreviewWrap").style.display = "block";
+}
+
+function clearSelectedImage() {
+  selectedImage = null;
+
+  $("imagePreview").src = "";
+  $("imagePreviewWrap").style.display = "none";
+  $("imageInput").value = "";
+}
+
+function readImageFile(file) {
+  if (!file || !file.type.startsWith("image/")) return;
+
+  const reader = new FileReader();
+
+  reader.onload = event => {
+    showImagePreview(event.target.result);
+  };
+
+  reader.onerror = () => {
+    alert("تعذر قراءة الصورة. حاول مرة أخرى.");
+  };
+
+  reader.readAsDataURL(file);
+}
+
+$("attachButton").addEventListener("click", () => {
+  $("imageInput").click();
+});
+
+$("imageInput").addEventListener("change", event => {
+  readImageFile(event.target.files?.[0]);
+});
+
+$("removeImageButton").addEventListener("click", clearSelectedImage);
+
+/* لصق الصور Ctrl + V */
+
+document.addEventListener("paste", event => {
+  const items = event.clipboardData?.items;
+
+  if (!items) return;
+
+  for (const item of items) {
+    if (item.type && item.type.startsWith("image/")) {
+      const file = item.getAsFile();
+
+      if (!file) continue;
+
+      event.preventDefault();
+      readImageFile(file);
+      return;
+    }
+  }
+});
+
+/* الكتابة والإرسال */
+
+$("messageInput").addEventListener("input", () => {
+  const textarea = $("messageInput");
+
+  textarea.style.height = "auto";
+
+  textarea.style.height =
+    Math.min(textarea.scrollHeight, 160) + "px";
+});
+
+$("messageInput").addEventListener("keydown", event => {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    sendMessage();
+  }
+});
+
+$("sendButton").addEventListener("click", sendMessage);
+
+/* تجهيز سجل مختصر لتقليل حجم الطلب */
+
+function prepareHistory(messages) {
+  const recent = messages.slice(-MAX_HISTORY_MESSAGES);
+
+  let imageCount = 0;
+
+  return recent.map(message => {
+    let image = message.image || null;
+
+    if (image) {
+      imageCount++;
+
+      if (imageCount > MAX_HISTORY_IMAGES) {
+        image = null;
+      }
+    }
+
+    return {
+      role: message.role,
+      content: message.content || "",
+      image: image
+    };
+  });
+}
+
+/* الاتصال بالخوادم */
+
+async function requestCloudflare(body) {
+  const controller = new AbortController();
+
+  const timeout = setTimeout(() => {
+    controller.abort();
+  }, PRIMARY_TIMEOUT);
+
+  try {
+    return await fetch(CLOUDFLARE_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body,
+      signal: controller.signal
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function requestRender(body) {
+  return await fetch(RENDER_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body
+  });
+}
+
+async function getAIResponse(body) {
+  let response;
+
+  try {
+    response = await requestCloudflare(body);
+
+    if (response.status >= 500) {
+      throw new Error("Cloudflare server error");
+    }
+
+    if (response.status === 429) {
+      const errorText = await response.clone().text();
+
+      if (/1027|daily request limit/i.test(errorText)) {
+        throw new Error("Cloudflare limit reached");
+      }
+    }
+
+    return response;
+
+  } catch (error) {
+    console.warn("Cloudflare unavailable; trying Render:", error);
+
+    return await requestRender(body);
+  }
+}
+
+/* إرسال الرسالة */
+
+async function sendMessage() {
+  if (isSending) return;
+
+  const input = $("messageInput");
+
+  const messageText = input.value.trim();
+  const imageToSend = selectedImage;
+
+  if (!messageText && !imageToSend) return;
+
+  if (!currentConversationId || !getCurrentConversation()) {
+    const conversation = {
+      id: createId(),
+      title: createTitle(messageText),
+      messages: []
+    };
+
+    conversations.unshift(conversation);
+    currentConversationId = conversation.id;
+
+    localStorage.setItem(
+      "nova_current_conversation",
+      currentConversationId
+    );
+  }
+
+  const conversation = getCurrentConversation();
+
+  if (!conversation.messages.length) {
+    conversation.title = createTitle(messageText);
+  }
+
+  conversation.messages.push({
+    role: "user",
+    content: messageText,
+    image: imageToSend
+  });
+
+  saveConversations();
+  renderHistory();
+  renderConversation();
+
+  input.value = "";
+  input.style.height = "auto";
+
+  clearSelectedImage();
+
+  isSending = true;
+  $("sendButton").disabled = true;
+
+  addThinkingMessage();
+  scrollToBottom();
+
+  const history = prepareHistory(
+    conversation.messages.slice(0, -1)
+  );
+
+  const requestBody = JSON.stringify({
+    message: messageText,
+    image: imageToSend,
+    history: history
+  });
+
+  try {
+    const response = await getAIResponse(requestBody);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+
+      throw new Error(
+        "HTTP " + response.status + ": " + errorText
+      );
+    }
+
+    const data = await response.json();
+
+    const answer =
+      data.reply ||
+      data.message ||
+      data.response ||
+      "لم يتم الحصول على إجابة.";
+
+    conversation.messages.push({
+      role: "assistant",
+      content: answer,
+      image: null
+    });
+
+  } catch (error) {
+    console.error("Nova AI error:", error);
+
+    conversation.messages.push({
+      role: "assistant",
+      content:
+        "حدث خطأ أثناء الاتصال بالخادم. حاول مرة أخرى بعد قليل.",
+      image: null
+    });
+
+  } finally {
+    removeThinkingMessage();
+
+    isSending = false;
+    $("sendButton").disabled = false;
+
+    saveConversations();
+    renderHistory();
+    renderConversation();
+    scrollToBottom();
+  }
+}
+
+/* قائمة الهاتف */
+
+function toggleMobileMenu() {
+  const sidebar = $("sidebar");
+  const overlay = $("mobileOverlay");
+
+  const isOpen = sidebar.classList.contains("open");
+
+  sidebar.classList.toggle("open", !isOpen);
+  overlay.classList.toggle("show", !isOpen);
+}
+
+function closeMobileMenu() {
+  $("sidebar").classList.remove("open");
+  $("mobileOverlay").classList.remove("show");
+}
+
+$("menuButton").addEventListener("click", toggleMobileMenu);
+
+$("mobileOverlay").addEventListener("click", closeMobileMenu);
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    closeMobileMenu();
+  }
+});
+
+$("newChatButton").addEventListener("click", createNewConversation);
+
+/* تشغيل الموقع */
+
+function init() {
+  if (!getCurrentConversation()) {
+    currentConversationId = conversations[0]?.id || null;
+  }
+
+  if (currentConversationId) {
+    localStorage.setItem(
+      "nova_current_conversation",
+      currentConversationId
+    );
+  } else {
+    localStorage.removeItem("nova_current_conversation");
+  }
+
+  renderHistory();
+  renderConversation();
+}
+
+init();
+
+</script>
 
 </body>
-
 </html>
