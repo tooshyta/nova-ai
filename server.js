@@ -1,3 +1,4 @@
+
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -9,7 +10,14 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = "gemini-3.8-flash";
+
+// ترتيب النماذج: الأساسي ثم الاحتياطية
+const GEMINI_MODELS = [
+  "gemini-3.8-flash",
+  "gemini-3.7-flash",
+  "gemini-3.6-flash",
+  "gemini-3.5-flash-lite"
+];
 
 app.use(express.json({ limit: "15mb" }));
 
@@ -89,6 +97,38 @@ const systemInstruction = `
 لا تكشف مفاتيح API أو الأسرار أو المتغيرات البيئية.
 `;
 
+// أخطاء تستدعي الانتقال إلى نموذج احتياطي
+function shouldFallback(status) {
+  return [
+    408,
+    429,
+    500,
+    502,
+    503,
+    504
+  ].includes(status);
+}
+
+// استخراج الإجابة
+function extractReply(result) {
+  const steps = Array.isArray(result?.steps)
+    ? result.steps
+    : [];
+
+  return steps
+    .filter(step => step.type === "model_output")
+    .flatMap(step =>
+      Array.isArray(step.content) ? step.content : []
+    )
+    .filter(part =>
+      part.type === "text" &&
+      typeof part.text === "string"
+    )
+    .map(part => part.text)
+    .join("")
+    .trim();
+}
+
 // API المحادثة
 app.post("/api/chat", async (req, res) => {
   try {
@@ -162,7 +202,7 @@ app.post("/api/chat", async (req, res) => {
 
       if (!match) {
         return res.status(400).json({
-          error: "صيغة الصورة غير مدعومة. أرسل صورة بصيغة صحيحة."
+          error: "صيغة الصورة غير مدعومة."
         });
       }
 
@@ -173,85 +213,109 @@ app.post("/api/chat", async (req, res) => {
       });
     }
 
-    // الاتصال بـ Gemini Interactions API
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/interactions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": GEMINI_API_KEY
-        },
-        body: JSON.stringify({
-          model: GEMINI_MODEL,
-          system_instruction: systemInstruction,
-          input,
-          store: false,
-          generation_config: {
-            thinking_level: "low"
+    let lastError = null;
+
+    // تجربة النماذج بالترتيب
+    for (const model of GEMINI_MODELS) {
+      console.log(`Nova AI trying model: ${model}`);
+
+      try {
+        const response = await fetch(
+          "https://generativelanguage.googleapis.com/v1beta/interactions",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-goog-api-key": GEMINI_API_KEY
+            },
+            body: JSON.stringify({
+              model,
+              system_instruction: systemInstruction,
+              input,
+              store: false,
+              generation_config: {
+                thinking_level: "low"
+              }
+            }),
+            signal: AbortSignal.timeout(25000)
           }
-        }),
-        signal: AbortSignal.timeout(120000)
+        );
+
+        const responseText = await response.text();
+
+        let result;
+
+        try {
+          result = JSON.parse(responseText);
+        } catch {
+          result = {};
+        }
+
+        if (!response.ok) {
+          const errorMessage =
+            result?.error?.message ||
+            responseText ||
+            "Unknown Gemini error";
+
+          console.error(
+            `Gemini ${model} Error ${response.status}:`,
+            errorMessage
+          );
+
+          lastError = errorMessage;
+
+          if (shouldFallback(response.status)) {
+            console.log(`Switching from ${model} to next model...`);
+            continue;
+          }
+
+          return res.status(response.status).json({
+            error: errorMessage
+          });
+        }
+
+        const reply = extractReply(result);
+
+        if (!reply) {
+          lastError = "لم يرجع النموذج إجابة نصية.";
+          console.error(`Empty response from ${model}`);
+          continue;
+        }
+
+        console.log(`Nova AI answered using: ${model}`);
+
+        return res.json({
+          reply,
+          model
+        });
+
+      } catch (error) {
+        lastError = error.message;
+
+        console.error(
+          `Connection error with ${model}:`,
+          error.message
+        );
+
+        // الانتقال للنموذج التالي
+        continue;
       }
+    }
+
+    console.error(
+      "All Gemini models failed:",
+      lastError
     );
 
-    const result = await response.json();
-
-    if (!response.ok) {
-      console.error(
-        "Gemini API Error:",
-        response.status,
-        result?.error?.message || JSON.stringify(result)
-      );
-
-      return res.status(response.status).json({
-        error:
-          result?.error?.message ||
-          "حدث خطأ أثناء الاتصال بـ Gemini."
-      });
-    }
-
-    // استخراج إجابة النموذج
-    const outputSteps = Array.isArray(result.steps)
-      ? result.steps.filter(step => step.type === "model_output")
-      : [];
-
-    const reply = outputSteps
-      .flatMap(step =>
-        Array.isArray(step.content) ? step.content : []
-      )
-      .filter(part =>
-        part.type === "text" &&
-        typeof part.text === "string"
-      )
-      .map(part => part.text)
-      .join("")
-      .trim();
-
-    if (!reply) {
-      console.error(
-        "Gemini returned no text:",
-        JSON.stringify(result)
-      );
-
-      return res.status(502).json({
-        error: "لم يتمكن Gemini من إنشاء إجابة. حاول مرة أخرى."
-      });
-    }
-
-    return res.json({ reply });
+    return res.status(503).json({
+      error: "جميع نماذج الذكاء الاصطناعي مشغولة حالياً. حاول مجدداً بعد قليل."
+    });
 
   } catch (error) {
     console.error("Nova AI Error:", error);
 
-    if (error.name === "TimeoutError") {
-      return res.status(504).json({
-        error: "استغرق الاتصال وقتاً طويلاً. حاول مرة أخرى."
-      });
-    }
-
     return res.status(500).json({
-      error: "حدث خطأ أثناء الاتصال بالذكاء الاصطناعي."
+      error: "حدث خطأ داخلي أثناء معالجة الطلب."
     });
   }
 });
