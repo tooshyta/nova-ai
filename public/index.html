@@ -659,9 +659,8 @@ textarea::placeholder { color: #737b88; }
 </main>
 
 <script>
-"use strict";
 
-/* إعداد الخوادم */
+"use strict";
 
 const CLOUDFLARE_URL =
   "https://nova-ai-worker.saidaabou216.workers.dev/api/chat";
@@ -671,9 +670,7 @@ const RENDER_URL =
 
 const MAX_HISTORY_MESSAGES = 10;
 const MAX_HISTORY_IMAGES = 2;
-const PRIMARY_TIMEOUT = 30000;
-
-/* عناصر الصفحة */
+const PRIMARY_TIMEOUT = 90000;
 
 const $ = id => document.getElementById(id);
 
@@ -683,7 +680,6 @@ try {
   const saved = JSON.parse(
     localStorage.getItem("nova_conversations") || "[]"
   );
-
   conversations = Array.isArray(saved) ? saved : [];
 } catch {
   conversations = [];
@@ -694,8 +690,6 @@ let currentConversationId =
 
 let selectedImage = null;
 let isSending = false;
-
-/* المحادثات */
 
 function saveConversations() {
   try {
@@ -737,7 +731,6 @@ function createNewConversation() {
   };
 
   conversations.unshift(conversation);
-
   currentConversationId = conversation.id;
 
   localStorage.setItem(
@@ -823,8 +816,6 @@ function renderHistory() {
   });
 }
 
-/* عرض المحادثات */
-
 function renderConversation() {
   const chat = $("chat");
   chat.innerHTML = "";
@@ -866,8 +857,6 @@ function createWelcome() {
 
   return welcome;
 }
-
-/* تنسيق Markdown بأمان */
 
 function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -977,7 +966,6 @@ function formatMarkdown(text) {
       closeQuote();
 
       const level = heading[1].length;
-
       html += `<h${level}>${formatInline(heading[2])}</h${level}>`;
       continue;
     }
@@ -1031,7 +1019,6 @@ function formatMarkdown(text) {
     }
 
     closeList();
-
     html += "<p>" + formatInline(trimmed) + "</p>";
   }
 
@@ -1058,33 +1045,27 @@ function addMessageToScreen(role, content, image) {
 
   if (image) {
     const img = document.createElement("img");
-
     img.src = image;
     img.className = "message-image";
     img.alt = "الصورة المرسلة";
-
     box.appendChild(img);
   }
 
   if (content) {
     const text = document.createElement("div");
-
     text.className = "markdown-body";
     text.innerHTML = formatMarkdown(content);
-
     box.appendChild(text);
   }
 
   if (role === "assistant" && content) {
     const copy = document.createElement("button");
-
     copy.className = "copy-button";
     copy.textContent = "نسخ";
 
     copy.addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(content);
-
         copy.textContent = "تم النسخ ✓";
 
         setTimeout(() => {
@@ -1101,38 +1082,6 @@ function addMessageToScreen(role, content, image) {
   message.appendChild(box);
   $("chat").appendChild(message);
 }
-
-/* الكتابة التدريجية */
-
-function typeAnswer(element, content, speed = 12) {
-  return new Promise(resolve => {
-    let index = 0;
-    const step = 4;
-
-    element.classList.add("typing-cursor");
-
-    function writeNext() {
-      index = Math.min(index + step, content.length);
-
-      element.innerHTML = formatMarkdown(
-        content.slice(0, index)
-      );
-
-      scrollToBottom();
-
-      if (index < content.length) {
-        setTimeout(writeNext, speed);
-      } else {
-        element.classList.remove("typing-cursor");
-        resolve();
-      }
-    }
-
-    writeNext();
-  });
-}
-
-/* مؤشر الانتظار */
 
 function addThinkingMessage() {
   const message = document.createElement("div");
@@ -1165,14 +1114,12 @@ function scrollToBottom() {
 
 function showImagePreview(dataUrl) {
   selectedImage = dataUrl;
-
   $("imagePreview").src = dataUrl;
   $("imagePreviewWrap").style.display = "block";
 }
 
 function clearSelectedImage() {
   selectedImage = null;
-
   $("imagePreview").src = "";
   $("imagePreviewWrap").style.display = "none";
   $("imageInput").value = "";
@@ -1204,11 +1151,8 @@ $("imageInput").addEventListener("change", event => {
 
 $("removeImageButton").addEventListener("click", clearSelectedImage);
 
-/* لصق الصور Ctrl + V */
-
 document.addEventListener("paste", event => {
   const items = event.clipboardData?.items;
-
   if (!items) return;
 
   for (const item of items) {
@@ -1228,9 +1172,7 @@ document.addEventListener("paste", event => {
 
 $("messageInput").addEventListener("input", () => {
   const textarea = $("messageInput");
-
   textarea.style.height = "auto";
-
   textarea.style.height =
     Math.min(textarea.scrollHeight, 160) + "px";
 });
@@ -1244,11 +1186,8 @@ $("messageInput").addEventListener("keydown", event => {
 
 $("sendButton").addEventListener("click", sendMessage);
 
-/* تجهيز سجل مختصر لتقليل حجم الطلب */
-
 function prepareHistory(messages) {
   const recent = messages.slice(-MAX_HISTORY_MESSAGES);
-
   let imageCount = 0;
 
   return recent.map(message => {
@@ -1256,16 +1195,13 @@ function prepareHistory(messages) {
 
     if (image) {
       imageCount++;
-
-      if (imageCount > MAX_HISTORY_IMAGES) {
-        image = null;
-      }
+      if (imageCount > MAX_HISTORY_IMAGES) image = null;
     }
 
     return {
       role: message.role,
       content: message.content || "",
-      image: image
+      image
     };
   });
 }
@@ -1275,9 +1211,10 @@ function prepareHistory(messages) {
 async function requestCloudflare(body) {
   const controller = new AbortController();
 
-  const timeout = setTimeout(() => {
-    controller.abort();
-  }, PRIMARY_TIMEOUT);
+  const timeout = setTimeout(
+    () => controller.abort(),
+    PRIMARY_TIMEOUT
+  );
 
   try {
     return await fetch(CLOUDFLARE_URL, {
@@ -1294,7 +1231,7 @@ async function requestCloudflare(body) {
 }
 
 async function requestRender(body) {
-  return await fetch(RENDER_URL, {
+  return fetch(RENDER_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -1304,10 +1241,8 @@ async function requestRender(body) {
 }
 
 async function getAIResponse(body) {
-  let response;
-
   try {
-    response = await requestCloudflare(body);
+    const response = await requestCloudflare(body);
 
     if (response.status >= 500) {
       throw new Error("Cloudflare server error");
@@ -1325,9 +1260,155 @@ async function getAIResponse(body) {
 
   } catch (error) {
     console.warn("Cloudflare unavailable; trying Render:", error);
-
-    return await requestRender(body);
+    return requestRender(body);
   }
+}
+
+/* قراءة الإجابة التدريجية */
+
+async function readAIResponse(response, onText) {
+  const contentType =
+    response.headers.get("Content-Type") || "";
+
+  // دعم Render القديم الذي يعيد JSON
+  if (!contentType.includes("text/event-stream")) {
+    const data = await response.json();
+
+    const answer =
+      data.reply ||
+      data.message ||
+      data.response ||
+      "";
+
+    if (answer) onText(answer);
+
+    return {
+      answer,
+      model: data.model || null
+    };
+  }
+
+  if (!response.body) {
+    throw new Error("الخادم لم يرسل تدفق الإجابة.");
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+
+  let buffer = "";
+  let answer = "";
+  let model = null;
+
+  function processBlock(block) {
+    const dataLines = block
+      .split(/\r?\n/)
+      .filter(line => line.startsWith("data:"))
+      .map(line => line.slice(5).trimStart());
+
+    if (!dataLines.length) return;
+
+    const dataText = dataLines.join("\n").trim();
+
+    if (!dataText || dataText === "[DONE]") return;
+
+    let data;
+
+    try {
+      data = JSON.parse(dataText);
+    } catch {
+      return;
+    }
+
+    if (typeof data.text === "string" && data.text) {
+      answer += data.text;
+      onText(answer);
+    }
+
+    if (data.model) {
+      model = data.model;
+    }
+
+    if (data.error) {
+      throw new Error(data.error);
+    }
+  }
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+
+      let boundary;
+
+      while ((boundary = buffer.search(/\r?\n\r?\n/)) !== -1) {
+        const block = buffer.slice(0, boundary);
+        const separator = buffer.slice(boundary).match(/^\r?\n\r?\n/)[0];
+
+        buffer = buffer.slice(boundary + separator.length);
+
+        processBlock(block);
+      }
+    }
+
+    buffer += decoder.decode();
+
+    if (buffer.trim()) {
+      processBlock(buffer);
+    }
+
+    return { answer, model };
+
+  } finally {
+    reader.releaseLock();
+  }
+}
+
+/* فقاعة الإجابة */
+
+function createLiveAnswer() {
+  removeThinkingMessage();
+
+  const message = document.createElement("div");
+  message.className = "message ai";
+
+  const box = document.createElement("div");
+  box.className = "message-content";
+
+  const text = document.createElement("div");
+  text.className = "markdown-body typing-cursor";
+
+  box.appendChild(text);
+  message.appendChild(box);
+  $("chat").appendChild(message);
+
+  return { message, box, text };
+}
+
+function addCopyButton(box, answer) {
+  const oldButton = box.querySelector(".copy-button");
+  if (oldButton) oldButton.remove();
+
+  const copy = document.createElement("button");
+  copy.className = "copy-button";
+  copy.textContent = "نسخ";
+
+  copy.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(answer);
+      copy.textContent = "تم النسخ ✓";
+
+      setTimeout(() => {
+        copy.textContent = "نسخ";
+      }, 1500);
+    } catch {
+      copy.textContent = "تعذر النسخ";
+    }
+  });
+
+  box.appendChild(copy);
 }
 
 /* إرسال الرسالة */
@@ -1336,7 +1417,6 @@ async function sendMessage() {
   if (isSending) return;
 
   const input = $("messageInput");
-
   const messageText = input.value.trim();
   const imageToSend = selectedImage;
 
@@ -1376,7 +1456,6 @@ async function sendMessage() {
 
   input.value = "";
   input.style.height = "auto";
-
   clearSelectedImage();
 
   isSending = true;
@@ -1392,11 +1471,25 @@ async function sendMessage() {
   const requestBody = JSON.stringify({
     message: messageText,
     image: imageToSend,
-    history: history
+    history
   });
 
+  let live = null;
+  let answer = "";
+
+  function displayAnswer(fullText) {
+    answer = fullText;
+
+    if (!live) {
+      live = createLiveAnswer();
+    }
+
+    live.text.innerHTML = formatMarkdown(answer);
+    scrollToBottom();
+  }
+
   try {
-    const response = await getAIResponse(requestBody);
+    let response = await getAIResponse(requestBody);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -1406,56 +1499,43 @@ async function sendMessage() {
       );
     }
 
-    const data = await response.json();
+    let result;
 
-    const answer =
-      data.reply ||
-      data.message ||
-      data.response ||
-      "لم يتم الحصول على إجابة.";
+    try {
+      result = await readAIResponse(response, displayAnswer);
+    } catch (streamError) {
+      // إذا انقطع البث قبل وصول أي نص، نجرب Render.
+      if (!answer) {
+        console.warn("Cloudflare stream failed; trying Render:", streamError);
 
-    removeThinkingMessage();
+        response = await requestRender(requestBody);
 
-    /* إنشاء فقاعة الإجابة */
+        if (!response.ok) {
+          throw new Error(
+            "Render HTTP " + response.status + ": " +
+            await response.text()
+          );
+        }
 
-    const message = document.createElement("div");
-    message.className = "message ai";
-
-    const box = document.createElement("div");
-    box.className = "message-content";
-
-    const text = document.createElement("div");
-    text.className = "markdown-body";
-
-    box.appendChild(text);
-    message.appendChild(box);
-
-    $("chat").appendChild(message);
-
-    /* عرض الإجابة تدريجياً */
-
-    await typeAnswer(text, answer, 12);
-
-    /* زر النسخ */
-
-    const copy = document.createElement("button");
-    copy.className = "copy-button";
-    copy.textContent = "نسخ";
-
-    copy.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(answer);
-        copy.textContent = "تم النسخ ✓";
-
-        setTimeout(() => {
-          copy.textContent = "نسخ";
-        }, 1500);
-      } catch {
-        copy.textContent = "تعذر النسخ";
+        result = await readAIResponse(response, displayAnswer);
+      } else {
+        throw streamError;
       }
-    });
+    }
 
-    box.appendChild(copy);
+    answer = result.answer || answer;
+
+    if (!answer) {
+      throw new Error("لم يتم الحصول على إجابة.");
+    }
+
+    if (!live) {
+      live = createLiveAnswer();
+      live.text.innerHTML = formatMarkdown(answer);
+    }
+
+    live.text.classList.remove("typing-cursor");
+    addCopyButton(live.box, answer);
 
     conversation.messages.push({
       role: "assistant",
@@ -1466,14 +1546,31 @@ async function sendMessage() {
   } catch (error) {
     console.error("Nova AI error:", error);
 
-    removeThinkingMessage();
+    if (answer && live) {
+      live.text.classList.remove("typing-cursor");
+      addCopyButton(live.box, answer);
 
-    conversation.messages.push({
-      role: "assistant",
-      content:
-        "حدث خطأ أثناء الاتصال بالخادم. حاول مرة أخرى بعد قليل.",
-      image: null
-    });
+      conversation.messages.push({
+        role: "assistant",
+        content: answer,
+        image: null
+      });
+
+      const warning = document.createElement("p");
+      warning.textContent = "انقطع الاتصال بعد جزء من الإجابة.";
+      warning.style.color = "#e5a45b";
+      live.box.appendChild(warning);
+
+    } else {
+      removeThinkingMessage();
+
+      conversation.messages.push({
+        role: "assistant",
+        content:
+          "حدث خطأ أثناء الاتصال بالخادم. حاول مرة أخرى بعد قليل.",
+        image: null
+      });
+    }
 
   } finally {
     removeThinkingMessage();
