@@ -2,13 +2,8 @@
 <html lang="ar" dir="rtl">
 
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Nova AI - مساعد ذكاء اصطناعي</title>
 
@@ -17,89 +12,33 @@
     content="Nova AI هو مساعد ذكاء اصطناعي يساعدك في الإجابة عن الأسئلة وتحليل الصور."
   >
 
-  <meta
-    name="application-name"
-    content="Nova AI"
-  >
+  <meta name="application-name" content="Nova AI">
 
-  <!-- FAVICON -->
+  <link rel="icon" type="image/png" sizes="512x512" href="/logo.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/logo.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="/logo.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/logo.png">
 
-  <link
-    rel="icon"
-    type="image/png"
-    sizes="512x512"
-    href="/logo.png"
-  >
-
-  <link
-    rel="icon"
-    type="image/png"
-    sizes="192x192"
-    href="/logo.png"
-  >
-
-  <link
-    rel="icon"
-    type="image/png"
-    sizes="48x48"
-    href="/logo.png"
-  >
-
-  <link
-    rel="apple-touch-icon"
-    sizes="180x180"
-    href="/logo.png"
-  >
-
-  <!-- SOCIAL PREVIEW -->
-
-  <meta
-    property="og:site_name"
-    content="Nova AI"
-  >
-
-  <meta
-    property="og:title"
-    content="Nova AI - مساعد ذكاء اصطناعي"
-  >
-
+  <meta property="og:site_name" content="Nova AI">
+  <meta property="og:title" content="Nova AI - مساعد ذكاء اصطناعي">
   <meta
     property="og:description"
     content="Nova AI هو مساعد ذكاء اصطناعي يساعدك في الإجابة عن الأسئلة وتحليل الصور."
   >
-
   <meta
     property="og:image"
     content="https://nova-ai-frontend-yhuy.onrender.com/logo.png"
   >
-
-  <meta
-    property="og:image:type"
-    content="image/png"
-  >
-
-  <meta
-    property="og:image:width"
-    content="512"
-  >
-
-  <meta
-    property="og:image:height"
-    content="512"
-  >
-
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
   <meta
     property="og:url"
     content="https://nova-ai-frontend-yhuy.onrender.com/"
   >
-
-  <meta
-    property="og:type"
-    content="website"
-  >
+  <meta property="og:type" content="website">
 
   <style>
-
     * {
       box-sizing: border-box;
     }
@@ -414,7 +353,6 @@
     }
 
     @keyframes thinkingBounce {
-
       0%,
       60%,
       100% {
@@ -426,7 +364,6 @@
         transform: translateY(-6px);
         opacity: 1;
       }
-
     }
 
     /* INPUT AREA */
@@ -506,7 +443,6 @@
     /* MOBILE */
 
     @media (max-width: 700px) {
-
       html,
       body {
         width: 100%;
@@ -620,47 +556,28 @@
       .welcome p {
         font-size: 14px;
       }
-
     }
-
   </style>
-
 </head>
 
 <body>
 
   <!-- LOGO -->
 
-  <a
-    href="/"
-    class="top-logo"
-    title="Nova AI"
-  >
-
-    <img
-      src="/logo.png"
-      alt="Nova AI"
-    >
-
+  <a href="/" class="top-logo" title="Nova AI">
+    <img src="/logo.png" alt="Nova AI">
     <span>Nova AI</span>
-
   </a>
 
   <!-- SIDEBAR -->
 
-  <aside
-    class="sidebar"
-    id="sidebar"
-  >
+  <aside class="sidebar" id="sidebar">
 
     <div class="sidebar-title">
       Nova AI
     </div>
 
-    <button
-      class="new-chat"
-      onclick="createNewConversation()"
-    >
+    <button class="new-chat" onclick="createNewConversation()">
       ＋ محادثة جديدة
     </button>
 
@@ -668,10 +585,7 @@
       المحادثات
     </div>
 
-    <div
-      class="history"
-      id="history"
-    ></div>
+    <div class="history" id="history"></div>
 
   </aside>
 
@@ -681,10 +595,7 @@
 
     <header class="header">
 
-      <button
-        class="menu-button"
-        onclick="openMobileMenu()"
-      >
+      <button class="menu-button" onclick="openMobileMenu()">
         ☰
       </button>
 
@@ -696,21 +607,11 @@
 
     <!-- CHAT -->
 
-    <section
-      class="chat"
-      id="chat"
-    >
+    <section class="chat" id="chat">
 
-      <div
-        class="welcome"
-        id="welcome"
-      >
+      <div class="welcome" id="welcome">
 
-        <img
-          class="welcome-logo"
-          src="/logo.png"
-          alt="Nova AI"
-        >
+        <img class="welcome-logo" src="/logo.png" alt="Nova AI">
 
         <h1>
           مرحبًا بك في Nova AI
@@ -834,21 +735,14 @@
     function createNewConversation() {
 
       const conversation = {
-
         id: createId(),
-
         title: "محادثة جديدة",
-
         messages: []
-
       };
 
-      conversations.unshift(
-        conversation
-      );
+      conversations.unshift(conversation);
 
-      currentConversationId =
-        conversation.id;
+      currentConversationId = conversation.id;
 
       localStorage.setItem(
         "nova_current_conversation",
@@ -856,11 +750,8 @@
       );
 
       saveConversations();
-
       renderHistory();
-
       renderConversation();
-
       closeMobileMenu();
 
     }
@@ -876,9 +767,7 @@
       );
 
       renderHistory();
-
       renderConversation();
-
       closeMobileMenu();
 
     }
@@ -890,10 +779,9 @@
         event.stopPropagation();
       }
 
-      conversations =
-        conversations.filter(
-          c => c.id !== id
-        );
+      conversations = conversations.filter(
+        c => c.id !== id
+      );
 
       if (currentConversationId === id) {
 
@@ -913,7 +801,6 @@
         );
 
         renderHistory();
-
         renderConversation();
 
         return;
@@ -926,7 +813,6 @@
       );
 
       renderHistory();
-
       renderConversation();
 
     }
@@ -935,113 +821,77 @@
     function renderHistory() {
 
       const history =
-        document.getElementById(
-          "history"
-        );
+        document.getElementById("history");
 
       history.innerHTML = "";
 
-      conversations.forEach(
-        conversation => {
+      conversations.forEach(conversation => {
 
-          const item =
-            document.createElement(
-              "div"
-            );
+        const item = document.createElement("div");
 
-          item.className =
-            "history-item"
-            + (
-              conversation.id ===
-              currentConversationId
-                ? " active"
-                : ""
-            );
-
-          item.onclick = () =>
-            openConversation(
-              conversation.id
-            );
-
-          const name =
-            document.createElement(
-              "div"
-            );
-
-          name.className =
-            "history-name";
-
-          name.textContent =
-            conversation.title;
-
-          const deleteButton =
-            document.createElement(
-              "button"
-            );
-
-          deleteButton.className =
-            "delete-history";
-
-          deleteButton.textContent =
-            "×";
-
-          deleteButton.onclick =
-            event =>
-              deleteConversation(
-                conversation.id,
-                event
-              );
-
-          item.appendChild(name);
-
-          item.appendChild(
-            deleteButton
+        item.className =
+          "history-item" +
+          (
+            conversation.id === currentConversationId
+              ? " active"
+              : ""
           );
 
-          history.appendChild(item);
+        item.onclick = () =>
+          openConversation(conversation.id);
 
-        }
-      );
+        const name = document.createElement("div");
+
+        name.className = "history-name";
+        name.textContent = conversation.title;
+
+        const deleteButton =
+          document.createElement("button");
+
+        deleteButton.className = "delete-history";
+        deleteButton.textContent = "×";
+
+        deleteButton.onclick = event =>
+          deleteConversation(conversation.id, event);
+
+        item.appendChild(name);
+        item.appendChild(deleteButton);
+
+        history.appendChild(item);
+
+      });
 
     }
 
 
     function renderConversation() {
 
-      const chat =
-        document.getElementById(
-          "chat"
-        );
+      const chat = document.getElementById("chat");
 
       chat.innerHTML = "";
 
-      const conversation =
-        getCurrentConversation();
+      const conversation = getCurrentConversation();
 
       if (
         !conversation ||
         conversation.messages.length === 0
       ) {
 
-        chat.appendChild(
-          createWelcome()
-        );
+        chat.appendChild(createWelcome());
 
         return;
 
       }
 
-      conversation.messages.forEach(
-        message => {
+      conversation.messages.forEach(message => {
 
-          addMessageToScreen(
-            message.role,
-            message.content,
-            message.image
-          );
+        addMessageToScreen(
+          message.role,
+          message.content,
+          message.image
+        );
 
-        }
-      );
+      });
 
       scrollToBottom();
 
@@ -1050,13 +900,9 @@
 
     function createWelcome() {
 
-      const welcome =
-        document.createElement(
-          "div"
-        );
+      const welcome = document.createElement("div");
 
-      welcome.className =
-        "welcome";
+      welcome.className = "welcome";
 
       welcome.innerHTML = `
 
@@ -1083,26 +929,18 @@
 
     function resetChat() {
 
-      const chat =
-        document.getElementById(
-          "chat"
-        );
+      const chat = document.getElementById("chat");
 
       chat.innerHTML = "";
 
-      chat.appendChild(
-        createWelcome()
-      );
+      chat.appendChild(createWelcome());
 
     }
 
 
     function escapeHtml(text) {
 
-      const div =
-        document.createElement(
-          "div"
-        );
+      const div = document.createElement("div");
 
       div.textContent = text;
 
@@ -1113,90 +951,59 @@
 
     function formatText(text) {
 
-      let formatted =
-        escapeHtml(text);
+      let formatted = escapeHtml(text);
 
-      formatted =
-        formatted.replace(
-          /\*\*(.*?)\*\*/g,
-          "<strong>$1</strong>"
-        );
+      formatted = formatted.replace(
+        /\*\*(.*?)\*\*/g,
+        "<strong>$1</strong>"
+      );
 
-      formatted =
-        formatted.replace(
-          /\n/g,
-          "<br>"
-        );
+      formatted = formatted.replace(/\n/g, "<br>");
 
       return formatted;
 
     }
 
 
-    function addMessageToScreen(
-      role,
-      content,
-      image
-    ) {
+    function addMessageToScreen(role, content, image) {
 
-      const chat =
-        document.getElementById(
-          "chat"
-        );
+      const chat = document.getElementById("chat");
 
-      const message =
-        document.createElement(
-          "div"
-        );
+      const message = document.createElement("div");
 
       message.className =
-        "message "
-        + (
+        "message " +
+        (
           role === "user"
             ? "user"
             : "ai"
         );
 
       const messageContent =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
-      messageContent.className =
-        "message-content";
+      messageContent.className = "message-content";
 
       if (image) {
 
         const imageElement =
-          document.createElement(
-            "img"
-          );
+          document.createElement("img");
 
-        imageElement.src =
-          image;
+        imageElement.src = image;
+        imageElement.className = "message-image";
 
-        imageElement.className =
-          "message-image";
-
-        messageContent.appendChild(
-          imageElement
-        );
+        messageContent.appendChild(imageElement);
 
       }
 
       if (content) {
 
         const textElement =
-          document.createElement(
-            "div"
-          );
+          document.createElement("div");
 
-        textElement.innerHTML =
-          formatText(content);
+        textElement.innerHTML = formatText(content);
 
-        messageContent.appendChild(
-          textElement
-        );
+        messageContent.appendChild(textElement);
 
       }
 
@@ -1206,108 +1013,69 @@
       ) {
 
         const copyButton =
-          document.createElement(
-            "button"
-          );
+          document.createElement("button");
 
-        copyButton.className =
-          "copy-button";
+        copyButton.className = "copy-button";
+        copyButton.textContent = "نسخ";
 
-        copyButton.textContent =
-          "نسخ";
+        copyButton.onclick = async () => {
 
-        copyButton.onclick =
-          async () => {
+          try {
 
-            try {
+            await navigator.clipboard.writeText(content);
 
-              await navigator
-                .clipboard
-                .writeText(content);
+            copyButton.textContent = "تم النسخ ✓";
 
-              copyButton.textContent =
-                "تم النسخ ✓";
+            setTimeout(() => {
+              copyButton.textContent = "نسخ";
+            }, 1500);
 
-              setTimeout(
-                () => {
+          } catch (error) {
 
-                  copyButton.textContent =
-                    "نسخ";
+            console.error(error);
 
-                },
-                1500
-              );
+          }
 
-            } catch (error) {
+        };
 
-              console.error(error);
-
-            }
-
-          };
-
-        messageContent.appendChild(
-          copyButton
-        );
+        messageContent.appendChild(copyButton);
 
       }
 
-      message.appendChild(
-        messageContent
-      );
+      message.appendChild(messageContent);
 
-      chat.appendChild(
-        message
-      );
+      chat.appendChild(message);
 
     }
 
 
     function addThinkingMessage() {
 
-      const chat =
-        document.getElementById(
-          "chat"
-        );
+      const chat = document.getElementById("chat");
 
-      const message =
-        document.createElement(
-          "div"
-        );
+      const message = document.createElement("div");
 
-      message.className =
-        "message ai";
-
-      message.id =
-        "thinkingMessage";
+      message.className = "message ai";
+      message.id = "thinkingMessage";
 
       const messageContent =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
-      messageContent.className =
-        "message-content";
+      messageContent.className = "message-content";
 
       messageContent.innerHTML = `
 
         <div class="thinking-dots">
-
           <span></span>
           <span></span>
           <span></span>
-
         </div>
 
       `;
 
-      message.appendChild(
-        messageContent
-      );
+      message.appendChild(messageContent);
 
-      chat.appendChild(
-        message
-      );
+      chat.appendChild(message);
 
     }
 
@@ -1315,17 +1083,11 @@
     async function sendMessage() {
 
       const input =
-        document.getElementById(
-          "messageInput"
-        );
+        document.getElementById("messageInput");
 
-      const message =
-        input.value.trim();
+      const message = input.value.trim();
 
-      if (
-        !message &&
-        !selectedImage
-      ) {
+      if (!message && !selectedImage) {
         return;
       }
 
@@ -1333,23 +1095,14 @@
       if (!currentConversationId) {
 
         const conversation = {
-
           id: createId(),
-
-          title: createTitle(
-            message
-          ),
-
+          title: createTitle(message),
           messages: []
-
         };
 
-        conversations.unshift(
-          conversation
-        );
+        conversations.unshift(conversation);
 
-        currentConversationId =
-          conversation.id;
+        currentConversationId = conversation.id;
 
         localStorage.setItem(
           "nova_current_conversation",
@@ -1359,8 +1112,7 @@
       }
 
 
-      const conversation =
-        getCurrentConversation();
+      const conversation = getCurrentConversation();
 
 
       if (
@@ -1368,8 +1120,7 @@
         message
       ) {
 
-        conversation.title =
-          createTitle(message);
+        conversation.title = createTitle(message);
 
       }
 
@@ -1377,9 +1128,7 @@
       conversation.messages.push({
 
         role: "user",
-
         content: message,
-
         image: selectedImage
 
       });
@@ -1388,18 +1137,14 @@
       saveConversations();
 
       renderHistory();
-
       renderConversation();
 
 
-      const imageToSend =
-        selectedImage;
+      const imageToSend = selectedImage;
 
 
       input.value = "";
-
-      input.style.height =
-        "auto";
+      input.style.height = "auto";
 
       clearSelectedImage();
 
@@ -1411,8 +1156,7 @@
 
       try {
 
-        const history =
-          conversation.messages;
+        const history = conversation.messages;
 
 
         // تجهيز الطلب مرة واحدة للخادمين
@@ -1428,9 +1172,7 @@
           body: JSON.stringify({
 
             message: message,
-
             image: imageToSend,
-
             history: history.slice(0, -1)
 
           })
@@ -1446,11 +1188,8 @@
         try {
 
           response = await fetch(
-
             "https://nova-ai-worker.saidaabou216.workers.dev/api/chat",
-
             requestOptions
-
           );
 
 
@@ -1458,21 +1197,15 @@
             response.headers.get("content-type") || "";
 
 
-          // أخطاء Cloudflare التي لا تعيد JSON
-
           if (
             response.status >= 500 &&
             !contentType.includes("application/json")
           ) {
 
-            throw new Error(
-              "Cloudflare unavailable"
-            );
+            throw new Error("Cloudflare unavailable");
 
           }
 
-
-          // حد طلبات Cloudflare
 
           if (response.status === 429) {
 
@@ -1483,14 +1216,11 @@
               /1027|daily request limit/i.test(errorText)
             ) {
 
-              throw new Error(
-                "Cloudflare request limit"
-              );
+              throw new Error("Cloudflare request limit");
 
             }
 
           }
-
 
         } catch (cloudflareError) {
 
@@ -1503,11 +1233,8 @@
           // الخادم الاحتياطي: Render
 
           response = await fetch(
-
             "https://nova-ai-8v6o.onrender.com/api/chat",
-
             requestOptions
-
           );
 
         }
@@ -1515,21 +1242,16 @@
 
         if (!response.ok) {
 
-          throw new Error(
-            "HTTP " + response.status
-          );
+          throw new Error("HTTP " + response.status);
 
         }
 
 
-        const data =
-          await response.json();
+        const data = await response.json();
 
 
         const thinkingMessage =
-          document.getElementById(
-            "thinkingMessage"
-          );
+          document.getElementById("thinkingMessage");
 
         if (thinkingMessage) {
           thinkingMessage.remove();
@@ -1546,9 +1268,7 @@
         conversation.messages.push({
 
           role: "assistant",
-
           content: answer,
-
           image: null
 
         });
@@ -1557,7 +1277,6 @@
         saveConversations();
 
         renderConversation();
-
         renderHistory();
 
         scrollToBottom();
@@ -1569,9 +1288,7 @@
 
 
         const thinkingMessage =
-          document.getElementById(
-            "thinkingMessage"
-          );
+          document.getElementById("thinkingMessage");
 
         if (thinkingMessage) {
           thinkingMessage.remove();
@@ -1593,7 +1310,6 @@
         saveConversations();
 
         renderConversation();
-
         renderHistory();
 
       }
@@ -1601,71 +1317,106 @@
     }
 
 
+    // عرض معاينة الصورة
+
+    function showImagePreview(imageData) {
+
+      selectedImage = imageData;
+
+      const preview =
+        document.getElementById("imagePreview");
+
+      preview.src = selectedImage;
+
+      preview.style.display = "block";
+
+    }
+
+
+    // رفع صورة من الملفات
+
     function handleImageUpload(event) {
 
-      const file =
-        event.target.files[0];
+      const file = event.target.files[0];
 
       if (!file) {
         return;
       }
 
+      if (!file.type.startsWith("image/")) {
+        return;
+      }
 
-      const reader =
-        new FileReader();
+      const reader = new FileReader();
 
+      reader.onload = function(e) {
 
-      reader.onload =
-        function(e) {
+        showImagePreview(e.target.result);
 
-          selectedImage =
-            e.target.result;
-
-
-          const preview =
-            document.getElementById(
-              "imagePreview"
-            );
-
-
-          preview.src =
-            selectedImage;
-
-
-          preview.style.display =
-            "block";
-
-        };
-
+      };
 
       reader.readAsDataURL(file);
 
     }
 
 
+    // لصق الصور مباشرة باستخدام Ctrl + V
+
+    document.addEventListener("paste", function(event) {
+
+      const items = event.clipboardData?.items;
+
+      if (!items) {
+        return;
+      }
+
+      for (const item of items) {
+
+        if (item.type.startsWith("image/")) {
+
+          event.preventDefault();
+
+          const file = item.getAsFile();
+
+          if (!file) {
+            return;
+          }
+
+          const reader = new FileReader();
+
+          reader.onload = function(e) {
+
+            showImagePreview(e.target.result);
+
+          };
+
+          reader.readAsDataURL(file);
+
+          return;
+
+        }
+
+      }
+
+    });
+
+
+    // إزالة الصورة المختارة
+
     function clearSelectedImage() {
 
-      selectedImage =
-        null;
-
+      selectedImage = null;
 
       const preview =
-        document.getElementById(
-          "imagePreview"
-        );
-
+        document.getElementById("imagePreview");
 
       preview.src = "";
 
-      preview.style.display =
-        "none";
+      preview.style.display = "none";
 
 
       const input =
-        document.getElementById(
-          "imageInput"
-        );
-
+        document.getElementById("imageInput");
 
       input.value = "";
 
@@ -1674,15 +1425,10 @@
 
     function autoResize(textarea) {
 
-      textarea.style.height =
-        "auto";
-
+      textarea.style.height = "auto";
 
       textarea.style.height =
-        Math.min(
-          textarea.scrollHeight,
-          160
-        ) + "px";
+        Math.min(textarea.scrollHeight, 160) + "px";
 
     }
 
@@ -1705,21 +1451,13 @@
 
     function scrollToBottom() {
 
-      const chat =
-        document.getElementById(
-          "chat"
-        );
+      const chat = document.getElementById("chat");
 
+      setTimeout(() => {
 
-      setTimeout(
-        () => {
+        chat.scrollTop = chat.scrollHeight;
 
-          chat.scrollTop =
-            chat.scrollHeight;
-
-        },
-        50
-      );
+      }, 50);
 
     }
 
@@ -1753,8 +1491,7 @@
 
         if (conversations.length) {
 
-          currentConversationId =
-            conversations[0].id;
+          currentConversationId = conversations[0].id;
 
           localStorage.setItem(
             "nova_current_conversation",
