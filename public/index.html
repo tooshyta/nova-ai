@@ -393,6 +393,25 @@ button { font-family: inherit; }
   30% { transform: translateY(-6px); opacity: 1; }
 }
 
+/* الكتابة التدريجية */
+
+.typing-cursor::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 17px;
+  background: #75baff;
+  margin-right: 4px;
+  vertical-align: middle;
+  border-radius: 2px;
+  animation: cursorBlink .8s infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
 /* Input */
 
 .input-area {
@@ -889,7 +908,7 @@ function formatInline(text) {
   );
 
   result = result.replace(
-    /(https?:\/\/[^\s<]+)/g,
+    /(?<!href=")(https?:\/\/[^\s<]+)/g,
     '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
   );
 
@@ -1081,6 +1100,36 @@ function addMessageToScreen(role, content, image) {
 
   message.appendChild(box);
   $("chat").appendChild(message);
+}
+
+/* الكتابة التدريجية */
+
+function typeAnswer(element, content, speed = 12) {
+  return new Promise(resolve => {
+    let index = 0;
+    const step = 4;
+
+    element.classList.add("typing-cursor");
+
+    function writeNext() {
+      index = Math.min(index + step, content.length);
+
+      element.innerHTML = formatMarkdown(
+        content.slice(0, index)
+      );
+
+      scrollToBottom();
+
+      if (index < content.length) {
+        setTimeout(writeNext, speed);
+      } else {
+        element.classList.remove("typing-cursor");
+        resolve();
+      }
+    }
+
+    writeNext();
+  });
 }
 
 /* مؤشر الانتظار */
@@ -1365,6 +1414,49 @@ async function sendMessage() {
       data.response ||
       "لم يتم الحصول على إجابة.";
 
+    removeThinkingMessage();
+
+    /* إنشاء فقاعة الإجابة */
+
+    const message = document.createElement("div");
+    message.className = "message ai";
+
+    const box = document.createElement("div");
+    box.className = "message-content";
+
+    const text = document.createElement("div");
+    text.className = "markdown-body";
+
+    box.appendChild(text);
+    message.appendChild(box);
+
+    $("chat").appendChild(message);
+
+    /* عرض الإجابة تدريجياً */
+
+    await typeAnswer(text, answer, 12);
+
+    /* زر النسخ */
+
+    const copy = document.createElement("button");
+    copy.className = "copy-button";
+    copy.textContent = "نسخ";
+
+    copy.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(answer);
+        copy.textContent = "تم النسخ ✓";
+
+        setTimeout(() => {
+          copy.textContent = "نسخ";
+        }, 1500);
+      } catch {
+        copy.textContent = "تعذر النسخ";
+      }
+    });
+
+    box.appendChild(copy);
+
     conversation.messages.push({
       role: "assistant",
       content: answer,
@@ -1373,6 +1465,8 @@ async function sendMessage() {
 
   } catch (error) {
     console.error("Nova AI error:", error);
+
+    removeThinkingMessage();
 
     conversation.messages.push({
       role: "assistant",
