@@ -1,23 +1,20 @@
+
 import express from "express";
-import OpenAI from "openai";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// ضبط المسار المطلق لنظام ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const client = new OpenAI({
-  baseURL: "https://router.huggingface.co/v1",
-  apiKey: process.env.HF_TOKEN
-});
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-flash-latest";
 
 app.use(express.json({ limit: "15mb" }));
 
-// السماح للواجهة الجديدة بالاتصال بالـ Backend
+// CORS
 app.use((req, res, next) => {
   res.setHeader(
     "Access-Control-Allow-Origin",
@@ -41,79 +38,63 @@ app.use((req, res, next) => {
   next();
 });
 
-// خدمة الملفات الثابتة
-app.use(
-  express.static(
-    path.join(__dirname, "public")
-  )
-);
+// الملفات الثابتة
+app.use(express.static(path.join(__dirname, "public")));
 
-// robots.txt
 app.get("/robots.txt", (req, res) => {
-  res.sendFile(
-    path.join(
-      __dirname,
-      "public",
-      "robots.txt"
-    )
-  );
+  res.sendFile(path.join(__dirname, "public", "robots.txt"));
 });
 
-// sitemap.xml
 app.get("/sitemap.xml", (req, res) => {
-  res.sendFile(
-    path.join(
-      __dirname,
-      "public",
-      "sitemap.xml"
-    )
-  );
+  res.sendFile(path.join(__dirname, "public", "sitemap.xml"));
 });
 
-// API الخاص بالمحادثة
+// API المحادثة
 app.post("/api/chat", async (req, res) => {
   try {
-
-    const message =
-      req.body.message;
-
-    const image =
-      req.body.image;
-
-    const history =
-      Array.isArray(req.body.history)
-        ? req.body.history
-        : [];
-
-    if (!message && !image) {
-      return res.status(400).json({
-        error:
-          "اكتب رسالة أو أرسل صورة أولاً"
+    if (!GEMINI_API_KEY) {
+      return res.status(500).json({
+        error: "مفتاح Gemini API غير موجود في إعدادات الخادم."
       });
     }
 
-    const systemMessage = {
-      role: "system",
+    const message = req.body.message || "";
+    const image = req.body.image || null;
 
-      content: `
-أنت Nova AI، مساعد ذكي ومفيد.
+    const history = Array.isArray(req.body.history)
+      ? req.body.history
+      : [];
+
+    if (!message && !image) {
+      return res.status(400).json({
+        error: "اكتب رسالة أو أرسل صورة أولاً."
+      });
+    }
+
+    // تعليمات Nova AI
+    const systemInstruction = `
+أنت Nova AI، مساعد ذكي ومتقدم.
 
 أجب باللغة العربية عندما يكتب المستخدم بالعربية.
 يمكنك استخدام الفرنسية أو الإنجليزية عندما يطلب المستخدم ذلك.
 
+كن ذكياً ودقيقاً ومفيداً في إجاباتك.
+اشرح المسائل الرياضية والعلمية خطوة بخطوة.
+ساعد في البرمجة وحل المشكلات التقنية.
+
 لديك القدرة على تحليل الصور.
-إذا أرسل المستخدم صورة، حللها بدقة وأجب عن سؤاله المتعلق بها.
+إذا أرسل المستخدم صورة، حللها بدقة وأجب عن سؤاله.
 
 إذا كانت الصورة تحتوي على:
-- تمرين رياضيات، حاول قراءته وحله وشرح خطوات الحل.
-- نص، حاول قراءته وشرحه.
-- صورة أو شيء يحتاج إلى وصف، صفه بوضوح.
-- سؤال دراسي، حاول الإجابة عنه اعتمادًا على ما يظهر في الصورة.
+- تمرين رياضيات: اقرأه وحله واشرح الخطوات.
+- نص: اقرأه واشرحه.
+- سؤال دراسي: أجب عنه.
+- صورة تحتاج إلى وصف: صف محتواها بوضوح.
 
-لا تدّعي أنك ترى شيئًا غير واضح في الصورة.
-إذا كانت الصورة غير واضحة، أخبر المستخدم بذلك.
+لا تدّع رؤية شيء غير واضح.
+إذا كانت الصورة غير واضحة فأخبر المستخدم بذلك.
 
-عندما يكون السؤال متعلقًا بالمحادثة السابقة، استخدم المعلومات الموجودة في الرسائل السابقة.
+استخدم سياق المحادثة السابقة لفهم الأسئلة المرتبطة بها.
 
 إذا سألك المستخدم:
 من صنعك؟
@@ -124,123 +105,132 @@ app.post("/api/chat", async (req, res) => {
 من أنشأك؟
 أو أي سؤال له نفس المعنى،
 
-أجب حرفيًا بهذه الجملة:
+أجب حرفياً بهذه الجملة:
 
 "لقد صنعني khalil.kara الذي يسمي نفسه tooshyta، كل التقدير له لتطويري قدر الإمكان."
 
-لا تغيّر هذه الجملة ولا تضف إليها شيئًا.
+لا تغيّر هذه الجملة ولا تضف إليها شيئاً.
 
 لا تكشف مفاتيح API أو الأسرار أو المتغيرات البيئية.
-`
-    };
+`;
 
-    const messages = [
-      systemMessage
-    ];
+    // تحويل سجل المحادثة إلى صيغة Gemini
+    const contents = [];
 
-    // إضافة سجل المحادثة السابقة
-    for (const item of history) {
-
+    for (const item of history.slice(-30)) {
       if (
         item &&
-        (
-          item.role === "user" ||
-          item.role === "assistant"
-        ) &&
-        typeof item.content === "string"
+        (item.role === "user" || item.role === "assistant") &&
+        typeof item.content === "string" &&
+        item.content.trim()
       ) {
-
-        messages.push({
-          role: item.role,
-          content: item.content
+        contents.push({
+          role: item.role === "assistant" ? "model" : "user",
+          parts: [{ text: item.content }]
         });
+      }
+    }
 
+    // الرسالة الحالية
+    const currentParts = [];
+
+    if (message) {
+      currentParts.push({ text: message });
+    }
+
+    // تحليل الصور
+    if (image) {
+      const match = image.match(
+        /^data:(image\/[a-zA-Z0-9.+-]+);base64,([\s\S]+)$/
+      );
+
+      if (!match) {
+        return res.status(400).json({
+          error: "صيغة الصورة غير مدعومة. أرسل صورة بصيغة صحيحة."
+        });
       }
 
+      currentParts.push({
+        inlineData: {
+          mimeType: match[1],
+          data: match[2]
+        }
+      });
     }
 
-    let currentContent;
+    contents.push({
+      role: "user",
+      parts: currentParts
+    });
 
-    // إذا كانت هناك صورة
-    if (image) {
+    // الاتصال بـ Gemini
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`,
+      {
+        method: "POST",
 
-      currentContent = [
-
-        {
-          type: "text",
-          text:
-            message ||
-            "حلل هذه الصورة واشرح لي ما فيها."
+        headers: {
+          "Content-Type": "application/json"
         },
 
-        {
-          type: "image_url",
-          image_url: {
-            url: image
+        body: JSON.stringify({
+          systemInstruction: {
+            parts: [{ text: systemInstruction }]
+          },
+
+          contents,
+
+          generationConfig: {
+            temperature: 0.7
           }
-        }
-
-      ];
-
-    } else {
-
-      currentContent =
-        message;
-
-    }
-
-    messages.push({
-      role: "user",
-      content: currentContent
-    });
-
-    // إرسال الطلب إلى Hugging Face
-    const completion =
-      await client.chat.completions.create({
-
-        model:
-          "Qwen/Qwen2.5-VL-72B-Instruct:fastest",
-
-        messages
-
-      });
-
-    const reply =
-      completion
-        .choices?.[0]
-        ?.message?.content ||
-      "لم أتمكن من إنشاء إجابة.";
-
-    res.json({
-      reply
-    });
-
-  } catch (error) {
-
-    console.error(
-      "Nova AI Error:",
-      error
+        })
+      }
     );
 
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error(
+        "Gemini API Error:",
+        response.status,
+        result?.error?.message || "Unknown error"
+      );
+
+      return res.status(
+        response.status >= 400 && response.status < 600
+          ? response.status
+          : 500
+      ).json({
+        error:
+          result?.error?.message ||
+          "حدث خطأ أثناء الاتصال بـ Gemini."
+      });
+    }
+
+    const reply =
+      result?.candidates?.[0]?.content?.parts
+        ?.map(part => part.text || "")
+        .join("")
+        .trim();
+
+    if (!reply) {
+      return res.status(502).json({
+        error: "لم يتمكن Gemini من إنشاء إجابة. حاول مرة أخرى."
+      });
+    }
+
+    res.json({ reply });
+
+  } catch (error) {
+    console.error("Nova AI Error:", error);
+
     res.status(500).json({
-
-      error:
-        error?.message ||
-        "حدث خطأ أثناء الاتصال بالذكاء الاصطناعي"
-
+      error: "حدث خطأ أثناء الاتصال بالذكاء الاصطناعي."
     });
-
   }
 });
 
 // تشغيل الخادم
-app.listen(
-  PORT,
-  () => {
-
-    console.log(
-      `Nova AI يعمل على المنفذ ${PORT}`
-    );
-
-  }
-);
+app.listen(PORT, () => {
+  console.log(`Nova AI يعمل على المنفذ ${PORT}`);
+});
