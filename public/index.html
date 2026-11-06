@@ -30,7 +30,6 @@ html, body {
 }
 
 body { display: flex; }
-
 button { font-family: inherit; }
 
 .top-logo {
@@ -89,9 +88,7 @@ button { font-family: inherit; }
 }
 
 .new-chat:hover,
-.input-button:hover {
-  background: #303846;
-}
+.input-button:hover { background: #303846; }
 
 .history-title {
   margin-top: 22px;
@@ -117,9 +114,7 @@ button { font-family: inherit; }
 }
 
 .history-item:hover,
-.history-item.active {
-  background: #222936;
-}
+.history-item.active { background: #222936; }
 
 .history-name {
   flex: 1;
@@ -268,8 +263,6 @@ button { font-family: inherit; }
   color: white;
 }
 
-/* Markdown */
-
 .markdown-body {
   line-height: 1.85;
   overflow-wrap: anywhere;
@@ -287,9 +280,7 @@ button { font-family: inherit; }
 .markdown-body h2 { font-size: 20px; }
 .markdown-body h3 { font-size: 17px; }
 
-.markdown-body p {
-  margin: 7px 0;
-}
+.markdown-body p { margin: 7px 0; }
 
 .markdown-body ul,
 .markdown-body ol {
@@ -297,10 +288,7 @@ button { font-family: inherit; }
   margin: 8px 0;
 }
 
-.markdown-body li {
-  margin: 5px 0;
-}
-
+.markdown-body li { margin: 5px 0; }
 .markdown-body strong { color: #fff; }
 
 .markdown-body blockquote {
@@ -367,8 +355,6 @@ button { font-family: inherit; }
 
 .markdown-body th { background: #202631; }
 
-/* Thinking */
-
 .thinking-dots {
   display: flex;
   align-items: center;
@@ -393,8 +379,6 @@ button { font-family: inherit; }
   30% { transform: translateY(-6px); opacity: 1; }
 }
 
-/* الكتابة التدريجية */
-
 .typing-cursor::after {
   content: "";
   display: inline-block;
@@ -411,8 +395,6 @@ button { font-family: inherit; }
   0%, 49% { opacity: 1; }
   50%, 100% { opacity: 0; }
 }
-
-/* Input */
 
 .input-area {
   padding: 15px 20px 20px;
@@ -659,7 +641,6 @@ textarea::placeholder { color: #737b88; }
 </main>
 
 <script>
-
 "use strict";
 
 const CLOUDFLARE_URL =
@@ -671,6 +652,10 @@ const RENDER_URL =
 const MAX_HISTORY_MESSAGES = 10;
 const MAX_HISTORY_IMAGES = 2;
 const PRIMARY_TIMEOUT = 90000;
+
+// إعدادات سرعة الكتابة
+const TYPE_INTERVAL = 22;
+const TYPE_BACKLOG_THRESHOLD = 80;
 
 const $ = id => document.getElementById(id);
 
@@ -1270,7 +1255,6 @@ async function readAIResponse(response, onText) {
   const contentType =
     response.headers.get("Content-Type") || "";
 
-  // دعم Render القديم الذي يعيد JSON
   if (!contentType.includes("text/event-stream")) {
     const data = await response.json();
 
@@ -1324,9 +1308,7 @@ async function readAIResponse(response, onText) {
       onText(answer);
     }
 
-    if (data.model) {
-      model = data.model;
-    }
+    if (data.model) model = data.model;
 
     if (data.error) {
       throw new Error(data.error);
@@ -1345,7 +1327,8 @@ async function readAIResponse(response, onText) {
 
       while ((boundary = buffer.search(/\r?\n\r?\n/)) !== -1) {
         const block = buffer.slice(0, boundary);
-        const separator = buffer.slice(boundary).match(/^\r?\n\r?\n/)[0];
+        const separator =
+          buffer.slice(boundary).match(/^\r?\n\r?\n/)[0];
 
         buffer = buffer.slice(boundary + separator.length);
 
@@ -1355,9 +1338,7 @@ async function readAIResponse(response, onText) {
 
     buffer += decoder.decode();
 
-    if (buffer.trim()) {
-      processBlock(buffer);
-    }
+    if (buffer.trim()) processBlock(buffer);
 
     return { answer, model };
 
@@ -1476,6 +1457,57 @@ async function sendMessage() {
 
   let live = null;
   let answer = "";
+  let displayedCharacters = 0;
+  let typingTimer = null;
+  let typingWaiters = [];
+
+  // تحويل النص إلى أحرف Unicode سليمة
+  function getCharacters(text) {
+    return Array.from(text);
+  }
+
+  function finishTyping() {
+    typingTimer = null;
+
+    const waiters = typingWaiters;
+    typingWaiters = [];
+
+    waiters.forEach(resolve => resolve());
+  }
+
+  function typeNextCharacters() {
+    const characters = getCharacters(answer);
+    const remaining = characters.length - displayedCharacters;
+
+    if (remaining <= 0) {
+      finishTyping();
+      return;
+    }
+
+    // حرف واحد غالبًا، وزيادة بسيطة عند تراكم النص
+    let count = 1;
+
+    if (remaining > TYPE_BACKLOG_THRESHOLD) {
+      count = 2;
+    }
+
+    displayedCharacters = Math.min(
+      displayedCharacters + count,
+      characters.length
+    );
+
+    const visibleText = characters
+      .slice(0, displayedCharacters)
+      .join("");
+
+    live.text.innerHTML = formatMarkdown(visibleText);
+    scrollToBottom();
+
+    typingTimer = setTimeout(
+      typeNextCharacters,
+      TYPE_INTERVAL
+    );
+  }
 
   function displayAnswer(fullText) {
     answer = fullText;
@@ -1484,8 +1516,22 @@ async function sendMessage() {
       live = createLiveAnswer();
     }
 
-    live.text.innerHTML = formatMarkdown(answer);
-    scrollToBottom();
+    if (!typingTimer) {
+      typeNextCharacters();
+    }
+  }
+
+  function waitForTyping() {
+    if (
+      !typingTimer &&
+      displayedCharacters >= getCharacters(answer).length
+    ) {
+      return Promise.resolve();
+    }
+
+    return new Promise(resolve => {
+      typingWaiters.push(resolve);
+    });
   }
 
   try {
@@ -1504,9 +1550,11 @@ async function sendMessage() {
     try {
       result = await readAIResponse(response, displayAnswer);
     } catch (streamError) {
-      // إذا انقطع البث قبل وصول أي نص، نجرب Render.
       if (!answer) {
-        console.warn("Cloudflare stream failed; trying Render:", streamError);
+        console.warn(
+          "Cloudflare stream failed; trying Render:",
+          streamError
+        );
 
         response = await requestRender(requestBody);
 
@@ -1529,6 +1577,9 @@ async function sendMessage() {
       throw new Error("لم يتم الحصول على إجابة.");
     }
 
+    // انتظار اكتمال ظهور جميع الحروف
+    await waitForTyping();
+
     if (!live) {
       live = createLiveAnswer();
       live.text.innerHTML = formatMarkdown(answer);
@@ -1545,6 +1596,8 @@ async function sendMessage() {
 
   } catch (error) {
     console.error("Nova AI error:", error);
+
+    await waitForTyping();
 
     if (answer && live) {
       live.text.classList.remove("typing-cursor");
@@ -1635,7 +1688,6 @@ function init() {
 }
 
 init();
-
 </script>
 
 </body>
