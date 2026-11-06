@@ -22,9 +22,7 @@
     content="Nova AI"
   >
 
-  <!-- =========================
-       FAVICON / STICKER
-  ========================= -->
+  <!-- FAVICON -->
 
   <link
     rel="icon"
@@ -53,9 +51,7 @@
     href="/logo.png"
   >
 
-  <!-- =========================
-       SOCIAL PREVIEW
-  ========================= -->
+  <!-- SOCIAL PREVIEW -->
 
   <meta
     property="og:site_name"
@@ -124,9 +120,7 @@
       display: flex;
     }
 
-    /* =========================
-       الشعار أعلى اليسار
-    ========================= */
+    /* LOGO */
 
     .top-logo {
       position: fixed;
@@ -158,9 +152,7 @@
       white-space: nowrap;
     }
 
-    /* =========================
-       SIDEBAR
-    ========================= */
+    /* SIDEBAR */
 
     .sidebar {
       width: 270px;
@@ -250,9 +242,7 @@
       color: #ff5c5c;
     }
 
-    /* =========================
-       MAIN
-    ========================= */
+    /* MAIN */
 
     .main {
       flex: 1;
@@ -262,9 +252,7 @@
       min-width: 0;
     }
 
-    /* =========================
-       HEADER
-    ========================= */
+    /* HEADER */
 
     .header {
       height: 60px;
@@ -295,9 +283,7 @@
       font-size: 20px;
     }
 
-    /* =========================
-       CHAT
-    ========================= */
+    /* CHAT */
 
     .chat {
       flex: 1;
@@ -338,9 +324,7 @@
       font-size: 15px;
     }
 
-    /* =========================
-       MESSAGE
-    ========================= */
+    /* MESSAGE */
 
     .message {
       display: flex;
@@ -402,9 +386,7 @@
       color: white;
     }
 
-    /* =========================
-       THREE THINKING DOTS
-    ========================= */
+    /* THINKING DOTS */
 
     .thinking-dots {
       display: flex;
@@ -447,9 +429,7 @@
 
     }
 
-    /* =========================
-       INPUT AREA
-    ========================= */
+    /* INPUT AREA */
 
     .input-area {
       padding: 15px 20px 20px;
@@ -523,9 +503,7 @@
       margin: 0 4px;
     }
 
-    /* =========================
-       MOBILE
-    ========================= */
+    /* MOBILE */
 
     @media (max-width: 700px) {
 
@@ -651,9 +629,7 @@
 
 <body>
 
-  <!-- =========================
-       LOGO
-  ========================= -->
+  <!-- LOGO -->
 
   <a
     href="/"
@@ -670,10 +646,7 @@
 
   </a>
 
-
-  <!-- =========================
-       SIDEBAR
-  ========================= -->
+  <!-- SIDEBAR -->
 
   <aside
     class="sidebar"
@@ -702,10 +675,7 @@
 
   </aside>
 
-
-  <!-- =========================
-       MAIN
-  ========================= -->
+  <!-- MAIN -->
 
   <main class="main">
 
@@ -724,10 +694,7 @@
 
     </header>
 
-
-    <!-- =========================
-         CHAT
-    ========================= -->
+    <!-- CHAT -->
 
     <section
       class="chat"
@@ -757,10 +724,7 @@
 
     </section>
 
-
-    <!-- =========================
-         INPUT
-    ========================= -->
+    <!-- INPUT -->
 
     <div class="input-area">
 
@@ -810,11 +774,7 @@
 
   </main>
 
-
-  <!-- =========================
-       JAVASCRIPT
-       بدون تغيير وظائف Nova AI
-  ========================= -->
+  <!-- JAVASCRIPT -->
 
   <script>
 
@@ -1455,32 +1415,102 @@
           conversation.messages;
 
 
-        const response =
-          await fetch(
-            "https://nova-ai-8v6o.onrender.com/api/chat",
-            {
-              method: "POST",
+        // تجهيز الطلب مرة واحدة للخادمين
 
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
+        const requestOptions = {
 
-              body: JSON.stringify({
+          method: "POST",
 
-                message:
-                  message,
+          headers: {
+            "Content-Type": "application/json"
+          },
 
-                image:
-                  imageToSend,
+          body: JSON.stringify({
 
-                history:
-                  history.slice(0, -1)
+            message: message,
 
-              })
+            image: imageToSend,
+
+            history: history.slice(0, -1)
+
+          })
+
+        };
+
+
+        let response;
+
+
+        // الخادم الأساسي: Cloudflare
+
+        try {
+
+          response = await fetch(
+
+            "https://nova-ai-worker.saidaabou216.workers.dev/api/chat",
+
+            requestOptions
+
+          );
+
+
+          const contentType =
+            response.headers.get("content-type") || "";
+
+
+          // أخطاء Cloudflare التي لا تعيد JSON
+
+          if (
+            response.status >= 500 &&
+            !contentType.includes("application/json")
+          ) {
+
+            throw new Error(
+              "Cloudflare unavailable"
+            );
+
+          }
+
+
+          // حد طلبات Cloudflare
+
+          if (response.status === 429) {
+
+            const errorText =
+              await response.clone().text();
+
+            if (
+              /1027|daily request limit/i.test(errorText)
+            ) {
+
+              throw new Error(
+                "Cloudflare request limit"
+              );
 
             }
+
+          }
+
+
+        } catch (cloudflareError) {
+
+          console.warn(
+            "Cloudflare unavailable, switching to Render:",
+            cloudflareError
           );
+
+
+          // الخادم الاحتياطي: Render
+
+          response = await fetch(
+
+            "https://nova-ai-8v6o.onrender.com/api/chat",
+
+            requestOptions
+
+          );
+
+        }
 
 
         if (!response.ok) {
@@ -1748,4 +1778,4 @@
 
 </body>
 
-  </html>
+</html>
