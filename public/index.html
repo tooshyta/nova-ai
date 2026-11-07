@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -25,6 +24,10 @@
 <style>
 * { box-sizing: border-box; }
 
+:root {
+  --download-banner-height: 66px;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -38,6 +41,109 @@ html, body {
 
 body { display: flex; }
 button { font-family: inherit; }
+
+/* شريط تحميل تطبيق Nova AI */
+.app-download-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--download-banner-height);
+  background: #151a22;
+  border-bottom: 1px solid #303641;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 18px;
+  z-index: 500;
+  direction: ltr;
+}
+
+.app-download-link {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  text-decoration: none;
+  direction: ltr;
+}
+
+.app-download-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  object-fit: contain;
+  border: 1px solid #303641;
+}
+
+.app-download-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.app-download-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+}
+
+.app-download-description {
+  font-size: 12px;
+  color: #aab2bf;
+}
+
+.app-download-action {
+  color: #75baff;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: .3px;
+}
+
+.app-download-link:hover .app-download-action {
+  color: #a5d2ff;
+  text-decoration: underline;
+}
+
+.close-download-banner {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: #aab2bf;
+  font-size: 23px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-download-banner:hover {
+  background: #303641;
+  color: white;
+}
+
+/* إبعاد الموقع عن شريط التحميل */
+body.has-download-banner .sidebar {
+  margin-top: var(--download-banner-height);
+  height: calc(100% - var(--download-banner-height));
+}
+
+body.has-download-banner .main {
+  margin-top: var(--download-banner-height);
+  height: calc(100% - var(--download-banner-height));
+}
+
+body.has-download-banner .top-logo {
+  top: calc(var(--download-banner-height) + 8px);
+}
 
 .top-logo {
   position: fixed;
@@ -494,6 +600,42 @@ textarea::placeholder { color: #737b88; }
 .mobile-overlay { display: none; }
 
 @media (max-width: 700px) {
+
+  :root {
+    --download-banner-height: 68px;
+  }
+
+  .app-download-banner {
+    padding: 7px 10px;
+    gap: 7px;
+  }
+
+  .app-download-link {
+    gap: 8px;
+  }
+
+  .app-download-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .app-download-title {
+    font-size: 13px;
+  }
+
+  .app-download-description {
+    font-size: 11px;
+  }
+
+  .app-download-action {
+    font-size: 11px;
+  }
+
+  .close-download-banner {
+    width: 30px;
+    height: 30px;
+  }
+
   .sidebar {
     position: fixed;
     top: 0;
@@ -503,6 +645,12 @@ textarea::placeholder { color: #737b88; }
     transform: translateX(100%);
     transition: transform .25s ease;
     z-index: 201;
+  }
+
+  body.has-download-banner .sidebar {
+    top: var(--download-banner-height);
+    height: calc(100dvh - var(--download-banner-height));
+    margin-top: 0;
   }
 
   .sidebar.open { transform: translateX(0); }
@@ -529,10 +677,18 @@ textarea::placeholder { color: #737b88; }
     min-height: 0;
   }
 
+  body.has-download-banner .main {
+    height: calc(100dvh - var(--download-banner-height));
+  }
+
   .header { height: 55px; }
   .menu-button { display: block; }
 
   .top-logo { left: 10px; top: 8px; }
+  body.has-download-banner .top-logo {
+    top: calc(var(--download-banner-height) + 8px);
+  }
+
   .top-logo img { width: 36px; height: 36px; }
   .top-logo span { font-size: 14px; }
 
@@ -584,6 +740,37 @@ textarea::placeholder { color: #737b88; }
 </head>
 
 <body>
+
+<!-- رسالة تنزيل تطبيق Nova AI -->
+<div class="app-download-banner" id="appDownloadBanner">
+
+  <a
+    class="app-download-link"
+    href="https://www.mediafire.com/file/zae70bggv9tpynv/Nova+AI.apk/file"
+  >
+    <img class="app-download-icon" src="/logo.png" alt="Nova AI">
+
+    <div class="app-download-text">
+      <span class="app-download-title">Get the Nova AI App</span>
+
+      <span class="app-download-description">
+        Download the app now for a better experience.
+      </span>
+
+      <span class="app-download-action">
+        DOWNLOAD NOW →
+      </span>
+    </div>
+  </a>
+
+  <button
+    class="close-download-banner"
+    id="closeDownloadBanner"
+    aria-label="Close download message"
+    title="Close"
+  >×</button>
+
+</div>
 
 <a href="/" class="top-logo" title="Nova AI">
   <img src="/logo.png" alt="Nova AI">
@@ -650,6 +837,41 @@ textarea::placeholder { color: #737b88; }
 <script>
 "use strict";
 
+/* إظهار أو إخفاء رسالة تحميل التطبيق */
+
+const DOWNLOAD_BANNER_KEY = "nova_app_banner_dismissed";
+
+const downloadBanner = document.getElementById("appDownloadBanner");
+const closeDownloadBanner = document.getElementById("closeDownloadBanner");
+
+function initializeDownloadBanner() {
+  try {
+    if (localStorage.getItem(DOWNLOAD_BANNER_KEY) === "true") {
+      downloadBanner.remove();
+      document.body.classList.remove("has-download-banner");
+    } else {
+      document.body.classList.add("has-download-banner");
+    }
+  } catch (error) {
+    document.body.classList.add("has-download-banner");
+  }
+}
+
+closeDownloadBanner.addEventListener("click", () => {
+  try {
+    localStorage.setItem(DOWNLOAD_BANNER_KEY, "true");
+  } catch (error) {
+    console.warn("تعذر حفظ إعداد إخفاء رسالة التحميل:", error);
+  }
+
+  downloadBanner.remove();
+  document.body.classList.remove("has-download-banner");
+});
+
+initializeDownloadBanner();
+
+/* إعدادات Nova AI الأصلية */
+
 const CLOUDFLARE_URL =
   "https://nova-ai-worker.saidaabou216.workers.dev/api/chat";
 
@@ -660,7 +882,6 @@ const MAX_HISTORY_MESSAGES = 10;
 const MAX_HISTORY_IMAGES = 2;
 const PRIMARY_TIMEOUT = 90000;
 
-// إعدادات سرعة الكتابة
 const TYPE_INTERVAL = 22;
 const TYPE_BACKLOG_THRESHOLD = 80;
 
