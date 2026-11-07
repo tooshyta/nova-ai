@@ -1,0 +1,38 @@
+name: Build Nova AI APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'app/**'
+      - 'build.gradle'
+      - 'settings.gradle'
+      - '.github/workflows/build-apk.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get Nova AI source
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build APK
+        run: |
+          gradle --version
+          gradle assembleDebug
+
+      - name: Upload Nova APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nova-AI-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
