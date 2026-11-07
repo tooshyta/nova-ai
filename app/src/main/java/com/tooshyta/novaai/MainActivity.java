@@ -1,5 +1,4 @@
 
-
 package com.tooshyta.novaai;
 
 import android.app.Activity;
