@@ -1,4 +1,3 @@
-
 name: Build Nova AI APK
 
 on:
@@ -34,16 +33,27 @@ jobs:
         with:
           packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
 
-      - name: Check AndroidManifest XML
+      - name: Clean AndroidManifest
         run: |
           python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("app/src/main/AndroidManifest.xml")
+          content = path.read_bytes()
+
+          content = content.lstrip(b"\xef\xbb\xbf")
+          content = content.lstrip()
+
+          path.write_bytes(content)
+
           import xml.etree.ElementTree as ET
-          ET.parse("app/src/main/AndroidManifest.xml")
+          ET.parse(path)
+
           print("AndroidManifest.xml is valid")
           PY
 
       - name: Build APK
-        run: gradle --no-daemon assembleDebug --stacktrace --info
+        run: gradle --no-daemon assembleDebug --stacktrace
 
       - name: Upload Nova APK
         uses: actions/upload-artifact@v4
