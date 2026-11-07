@@ -13,9 +13,7 @@ import android.webkit.ValueCallback;
 import android.content.Intent;
 import android.net.Uri;
 import android.graphics.Color;
-import android.view.Window;
-import android.view.WindowInsets;
-import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 public class MainActivity extends Activity {
 
@@ -26,32 +24,56 @@ public class MainActivity extends Activity {
     private final String NOVA_URL =
             "https://nova-ai-frontend-yhuy.onrender.com/";
 
+    private int dp(float value) {
+        return (int) (value * getResources()
+                .getDisplayMetrics().density + 0.5f);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Window window = getWindow();
+        WindowManager.LayoutParams windowParams =
+                getWindow().getAttributes();
 
-        // إظهار شريط الساعة والإشعارات وأزرار التنقل
-        window.clearFlags(
+        getWindow().clearFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
 
-        window.setStatusBarColor(Color.rgb(23, 23, 23));
-        window.setNavigationBarColor(Color.rgb(23, 23, 23));
+        getWindow().setStatusBarColor(Color.rgb(23, 23, 23));
+        getWindow().setNavigationBarColor(Color.rgb(23, 23, 23));
 
-        window.setSoftInputMode(
+        getWindow().getDecorView().setSystemUiVisibility(0);
+
+        getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
         );
 
-        window.getDecorView().setSystemUiVisibility(0);
-
         if (android.os.Build.VERSION.SDK_INT >= 30) {
-            window.setDecorFitsSystemWindows(true);
+            getWindow().setDecorFitsSystemWindows(true);
         }
 
+        LinearLayout root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setBackgroundColor(Color.rgb(23, 23, 23));
+
+        // مساحة إضافية أعلى الموقع
+        View topSpace = new View(this);
+        topSpace.setBackgroundColor(Color.rgb(23, 23, 23));
+        root.addView(topSpace, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                dp(24)
+        ));
+
         webView = new WebView(this);
-        setContentView(webView);
+
+        root.addView(webView, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                1
+        ));
+
+        setContentView(root);
 
         WebSettings settings = webView.getSettings();
 
@@ -60,12 +82,9 @@ public class MainActivity extends Activity {
         settings.setDatabaseEnabled(true);
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(true);
-
-        // الحفاظ على حجم الموقع والأزرار الأصلي
         settings.setLoadWithOverviewMode(false);
         settings.setUseWideViewPort(true);
         settings.setTextZoom(100);
-
         settings.setSupportZoom(false);
         settings.setBuiltInZoomControls(false);
         settings.setDisplayZoomControls(false);
@@ -113,7 +132,6 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == FILE_REQUEST && fileCallback != null) {
-
             Uri[] results = null;
 
             if (resultCode == RESULT_OK && data != null) {
