@@ -13,6 +13,9 @@ import android.webkit.ValueCallback;
 import android.content.Intent;
 import android.net.Uri;
 import android.graphics.Color;
+import android.view.Window;
+import android.view.WindowInsets;
+import android.view.ViewGroup;
 
 public class MainActivity extends Activity {
 
@@ -27,23 +30,25 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // السماح للنظام بإظهار أشرطة الحالة والتنقل
-        if (android.os.Build.VERSION.SDK_INT >= 30) {
-            getWindow().setDecorFitsSystemWindows(true);
-        }
+        Window window = getWindow();
 
-        getWindow().clearFlags(
+        // إظهار شريط الساعة والإشعارات وأزرار التنقل
+        window.clearFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
 
-        getWindow().setStatusBarColor(Color.rgb(23, 23, 23));
-        getWindow().setNavigationBarColor(Color.rgb(23, 23, 23));
+        window.setStatusBarColor(Color.rgb(23, 23, 23));
+        window.setNavigationBarColor(Color.rgb(23, 23, 23));
 
-        getWindow().getDecorView().setSystemUiVisibility(0);
-
-        getWindow().setSoftInputMode(
+        window.setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
         );
+
+        window.getDecorView().setSystemUiVisibility(0);
+
+        if (android.os.Build.VERSION.SDK_INT >= 30) {
+            window.setDecorFitsSystemWindows(true);
+        }
 
         webView = new WebView(this);
         setContentView(webView);
@@ -55,8 +60,12 @@ public class MainActivity extends Activity {
         settings.setDatabaseEnabled(true);
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(true);
-        settings.setLoadWithOverviewMode(true);
+
+        // الحفاظ على حجم الموقع والأزرار الأصلي
+        settings.setLoadWithOverviewMode(false);
         settings.setUseWideViewPort(true);
+        settings.setTextZoom(100);
+
         settings.setSupportZoom(false);
         settings.setBuiltInZoomControls(false);
         settings.setDisplayZoomControls(false);
