@@ -34,8 +34,16 @@ jobs:
         with:
           packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
 
+      - name: Check AndroidManifest XML
+        run: |
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          ET.parse("app/src/main/AndroidManifest.xml")
+          print("AndroidManifest.xml is valid")
+          PY
+
       - name: Build APK
-        run: gradle --no-daemon assembleDebug
+        run: gradle --no-daemon assembleDebug --stacktrace --info
 
       - name: Upload Nova APK
         uses: actions/upload-artifact@v4
